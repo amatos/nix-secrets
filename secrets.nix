@@ -14,4 +14,5 @@ in
   "github-ssh-key.age".publicKeys = users ++ systems;
   "github-ratelimit.age".publicKeys = users ++ systems;
   "luadns.ini.age".publicKeys = users ++ systems;
+  "tailscale-authkey.age".publicKeys = users ++ systems;
 }
