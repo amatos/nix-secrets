@@ -11,6 +11,8 @@ let
     gammu
     porkchop
   ];
+  # Hosts that run Syncthing
+  syncthingHosts = [ gammu porkchop ];
 in
 {
   "github-ssh-key.age".publicKeys = users ++ systems;
@@ -19,4 +21,5 @@ in
   "tailscale-authkey.age".publicKeys = users ++ systems;
   "cachix-authtoken.age".publicKeys = users ++ systems;
   "default-nixos-user-password.age".publicKeys = users ++ systems;
+  "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
 }
