@@ -12,7 +12,11 @@ let
     porkchop
   ];
   # Hosts that run Syncthing
-  syncthingHosts = [ gammu porkchop ];
+  syncthingHosts = [
+    codex
+    gammu
+    porkchop
+  ];
 in
 {
   "github-ssh-key.age".publicKeys = users ++ systems;
