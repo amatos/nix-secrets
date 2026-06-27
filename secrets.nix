@@ -9,6 +9,7 @@ let
   systems = [
     codex
     gammu
+    porkchop
   ];
 in
 {
