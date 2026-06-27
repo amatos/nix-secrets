@@ -26,4 +26,5 @@ in
   "cachix-authtoken.age".publicKeys = users ++ systems;
   "default-nixos-user-password.age".publicKeys = users ++ systems;
   "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
+  "smtp-relay-sasl.age".publicKeys = users ++ systems;
 }
