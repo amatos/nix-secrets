@@ -17,6 +17,11 @@ let
     gammu
     porkchop
   ];
+  ldapHosts = [
+    codex
+    gammu
+    porkchop
+  ];
 in
 {
   "github-ssh-key.age".publicKeys = users ++ systems;
@@ -27,4 +32,6 @@ in
   "default-nixos-user-password.age".publicKeys = users ++ systems;
   "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
   "smtp-relay-sasl.age".publicKeys = users ++ systems;
+  "ldap-admin-password.age".publicKeys = users ++ ldapHosts;
+  "ldap-kdc-password.age".publicKeys = users ++ ldapHosts;
 }
