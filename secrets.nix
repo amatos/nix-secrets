@@ -38,22 +38,26 @@ in
   "krb5-master-key.age".publicKeys = users ++ ldapHosts;
   "keytab-codex.age".publicKeys = [
     users
-    codex
+    systems.codex
   ];
   "keytab-darwintron.age".publicKeys = [
     users
-    darwintron
+    systems.darwintron
   ];
   "keytab-nixostron.age".publicKeys = [
     users
-    nixostron
+    systems.nixostron
   ];
   "keytab-gammu.age".publicKeys = [
     users
-    gammu
+    systems.gammu
   ];
   "keytab-porkchop.age".publicKeys = [
     users
-    porkchop
+    systems.porkchop
+  ];
+  "keytab-ldap-porkchop.age".publicKeys = [
+    systems.porkchop
+    users
   ];
 }
