@@ -34,4 +34,5 @@ in
   "smtp-relay-sasl.age".publicKeys = users ++ systems;
   "ldap-admin-password.age".publicKeys = users ++ ldapHosts;
   "ldap-kdc-password.age".publicKeys = users ++ ldapHosts;
+  "krb5-master-key.age".publicKeys = users ++ ldapHosts;
 }
