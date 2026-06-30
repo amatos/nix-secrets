@@ -3,23 +3,27 @@ let
   codex = "age1786r092jkepdahryx7t9kru8txuvreh3f2pgtvrv3u5hmjxjjy3st9udnl";
   gammu = "age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972";
   porkchop = "age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz";
+  huginn = "age1e6jrlsxfjs6vm8sx57d9dtfa9342ap2j07mj53hm26ek7kgddc5q2x9879";
 
   users = [ alberth ];
   systems = [
     codex
     gammu
     porkchop
+    huginn
   ];
   # Hosts that run Syncthing
   syncthingHosts = [
     codex
     gammu
     porkchop
+    huginn
   ];
   ldapHosts = [
     codex
     gammu
     porkchop
+    huginn
   ];
 in
 {
