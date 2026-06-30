@@ -20,10 +20,7 @@ let
     huginn
   ];
   ldapHosts = [
-    codex
-    gammu
     porkchop
-    huginn
   ];
 in
 {
