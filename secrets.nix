@@ -1,7 +1,5 @@
 let
-  # YubiKey identity — matches identityPaths in nix-config
   alberth = "age1yubikey1qtpg5lwewq75p68ru0n909uzkqddkhym2mkwp37h2fwkkgfdem05ssa4m6y";
-  # Host identities — derived from ssh public keys
   codex = "age1786r092jkepdahryx7t9kru8txuvreh3f2pgtvrv3u5hmjxjjy3st9udnl";
   gammu = "age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972";
   porkchop = "age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz";
@@ -36,28 +34,4 @@ in
   "ldap-admin-password.age".publicKeys = users ++ ldapHosts;
   "ldap-kdc-password.age".publicKeys = users ++ ldapHosts;
   "krb5-master-key.age".publicKeys = users ++ ldapHosts;
-  "keytab-codex.age".publicKeys = [
-    users
-    systems.codex
-  ];
-  "keytab-darwintron.age".publicKeys = [
-    users
-    systems.darwintron
-  ];
-  "keytab-nixostron.age".publicKeys = [
-    users
-    systems.nixostron
-  ];
-  "keytab-gammu.age".publicKeys = [
-    users
-    systems.gammu
-  ];
-  "keytab-porkchop.age".publicKeys = [
-    users
-    systems.porkchop
-  ];
-  "keytab-ldap-porkchop.age".publicKeys = [
-    systems.porkchop
-    users
-  ];
 }
