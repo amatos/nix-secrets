@@ -35,4 +35,5 @@ in
   "ldap-admin-password.age".publicKeys = users ++ ldapHosts;
   "ldap-kdc-password.age".publicKeys = users ++ ldapHosts;
   "krb5-master-key.age".publicKeys = users ++ ldapHosts;
+  "unifi-api-key.age".publicKeys = users ++ systems;
 }
