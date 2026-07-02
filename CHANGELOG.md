@@ -18,8 +18,12 @@ All notable changes to this project will be documented in this file.
 - `CLAUDE.md` — project directives covering the create/wire/commit/rekey
   workflow for text secrets, and the rule that binary secrets belong in
   `keytabs-matos-cc` instead
+- `secrets.nix` — added `huginn` host age key as a recipient
+- `unifi-api-key.age` — UniFi read-only API token for `nixie.dyndnsLuadns`
 
 ### Changed
 
 - `README.md` — Secrets table updated to list only the files actually
   present in this repo (keytab entries removed)
+- `README.md` — Recipients table was missing `huginn`, Secrets table was
+  missing `unifi-api-key.age`; both added to match `secrets.nix`

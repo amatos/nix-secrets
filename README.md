@@ -16,6 +16,7 @@ listed in `secrets.nix`.
 | `codex` | Host key (`/etc/age/host-key`) | `age1786r092jkepdahryx7t9kru8txuvreh3f2pgtvrv3u5hmjxjjy3st9udnl` |
 | `gammu` | Host key (`/etc/age/host-key`) | `age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972` |
 | `porkchop` | Host key (`/etc/age/host-key`) | `age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz` |
+| `huginn` | Host key (`/etc/age/host-key`) | `age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux` |
 
 The YubiKey identity stub is stored in `age-yubikey-identity-9ca1fbf9.txt`. Touch policy is **cached** (one touch valid for 15 seconds); PIN is not required.
 
@@ -34,6 +35,7 @@ The YubiKey identity stub is stored in `age-yubikey-identity-9ca1fbf9.txt`. Touc
 | `ldap-admin-password.age` | LDAP `cn=admin` bind password (consumed by `nix-kerberos-ldap`) |
 | `ldap-kdc-password.age` | KDC LDAP service account password (consumed by `nix-kerberos-ldap`) |
 | `krb5-master-key.age` | Kerberos KDC master key (consumed by `nix-kerberos-ldap`) |
+| `unifi-api-key.age` | UniFi read-only API token (consumed by `nixie.dyndnsLuadns`) |
 
 ---
 
