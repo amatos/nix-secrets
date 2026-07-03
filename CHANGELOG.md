@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Added
+
+- `unifi-backup-ssh-key.age` — SSH private key for connecting to
+  unifi.home.matos.cc, consumed by nixie's `modules/nixos/unifi-backup.nix`
+  (`nixie.unifiBackup`, enabled on `porkchop`) to scp UniFi's autobackup
+  directory to a local backup directory. The matching public key must be
+  added to unifi.home.matos.cc's `root` `authorized_keys` separately —
+  ragenix only manages the private half
+- `secrets.nix` — added `"unifi-backup-ssh-key.age".publicKeys = users ++
+  ldapHosts;` (currently just `porkchop`, the only host running the backup)
+
 ## 26.07.01
 
 ### Removed

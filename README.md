@@ -36,6 +36,7 @@ The YubiKey identity stub is stored in `age-yubikey-identity-9ca1fbf9.txt`. Touc
 | `ldap-kdc-password.age` | KDC LDAP service account password (consumed by `nix-kerberos-ldap`) |
 | `krb5-master-key.age` | Kerberos KDC master key (consumed by `nix-kerberos-ldap`) |
 | `unifi-api-key.age` | UniFi read-only API token (consumed by `nixie.dyndnsLuadns`) |
+| `unifi-backup-ssh-key.age` | SSH private key for unifi.home.matos.cc; scp's UniFi's autobackup dir to porkchop (consumed by `nixie.unifiBackup`) |
 
 ---
 
