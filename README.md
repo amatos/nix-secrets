@@ -1,14 +1,13 @@
-# nix-secrets
+# nix-secrets/README.md
 
-Age-encrypted secrets for the [nixie](https://github.com/amatos/nixie) NixOS + nix-darwin configuration.
-All files are encrypted with [ragenix](https://github.com/yaxitech/ragenix) and decryptable by the keys
-listed in `secrets.nix`.
+This repository is dedicated to storing plain text secrets required by the `nixie` configuration (e.g., API tokens, passwords). All files are encrypted with [ragenix](https://github.com/yaxitech/ragenix) and decryptable only by the keys listed in `secrets.nix`.
 
-> **Binary secrets, like Kerberos keytabs, do not belong in this repo.** Git diffs binary files poorly
-> and they don't benefit from the same plaintext-editing workflow as the secrets below. Kerberos keytabs
-> live in a dedicated repo: [`keytabs.matos.cc`](https://github.com/amatos/keytabs.matos.cc).
+> **🚨 IMPORTANT:** This repository is for **TEXT** credentials ONLY.
+> 1.  **Binary secrets (like Kerberos keytabs):** Must go into [`keytabs-matos-cc`](https://github.com/amatos/keytabs-matos-cc).
+> 2.  **Non-credential binary data:** Should be handled via dedicated tooling, not stored here.
 
 ## Recipients
+...
 
 | Name | Type | Key |
 | --- | --- | --- |
