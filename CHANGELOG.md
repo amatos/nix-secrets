@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Five backup YubiKey identities added as recipients (`secrets.nix`
+  `users`): `age-yubikey-identity-2ab5ff2f.txt`,
+  `age-yubikey-identity-49705840.txt`,
+  `age-yubikey-identity-7cb1cad0.txt`,
+  `age-yubikey-identity-be7a2b66.txt` (new physical keys), and
+  `age-yubikey-identity-d43f4e92.txt` (a re-keyed identity for the
+  original YubiKey, serial 13125942, moved from slot 1 to slot 2)
+- `secrets.nix` — added a plain, non-YubiKey `alberth` recovery key as
+  an additional recipient alongside the five YubiKey identities above
 - `unifi-backup-ssh-key.age` — SSH private key for connecting to
   unifi.home.matos.cc, consumed by nixie's `modules/nixos/unifi-backup.nix`
   (`nixie.unifiBackup`, enabled on `porkchop`) to scp UniFi's autobackup
@@ -14,6 +23,24 @@ All notable changes to this project will be documented in this file.
   ragenix only manages the private half
 - `secrets.nix` — added `"unifi-backup-ssh-key.age".publicKeys = users ++
   ldapHosts;` (currently just `porkchop`, the only host running the backup)
+
+### Changed
+
+- `secrets.nix` — rotated the primary `alberth` recipient away from
+  the original YubiKey (`age-yubikey-identity-9ca1fbf9.txt`) to the
+  new recipient set above; all secrets re-encrypted (`ragenix
+  --rekey`) accordingly
+- All five current YubiKey identities require a PIN once per session
+  (`PIN policy: Once`), unlike the retired identity (`PIN policy:
+  Never`) — `README.md` updated to reflect this
+- `README.md` — Recipients table and identity-stub references synced
+  with the new recipient set in `secrets.nix`
+
+### Removed
+
+- `age-yubikey-identity-9ca1fbf9.txt` — retired YubiKey identity stub;
+  the same physical key continues on as
+  `age-yubikey-identity-d43f4e92.txt` (new slot, new PIN policy)
 
 ## 26.07.01
 
