@@ -1,5 +1,13 @@
 # nix-secrets — project directives
 
+## Agent conventions
+
+Any message prefixed with `question:` is a purely theoretical/discussion
+request. Treat it as a request for information, reasoning, or discussion
+only — **never** as an instruction to perform an action (no file edits,
+commits, deployments, or other side effects), regardless of how the rest
+of the phrasing reads.
+
 ## What this is
 
 nix-secrets holds age-encrypted **text** secrets (SSH keys, tokens, passwords, `.ini`
