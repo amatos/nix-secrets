@@ -30,7 +30,7 @@ don't add it here.
 
 ```text
 secrets.nix                          # ragenix recipients (who can decrypt what)
-age-yubikey-identity-9ca1fbf9.txt    # YubiKey identity stub, not the key
+age-yubikey-identity-*.txt           # YubiKey identity stubs, not the keys
 *.age                                # age-encrypted secret files
 ```
 
