@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- `flake.nix`/`flake.lock` — pre-commit tooling only (`nixpkgs`,
+  `pre-commit-hooks`), no system builds; same `nixfmt`/`markdownlint-cli2`/
+  `commitlint` hook set as nixie, installed via `nix develop`
+- `.commitlintrc.yaml` — copied from nixie so the new `commitlint` hook has
+  rules to enforce
+- `.gitignore` — added `/.direnv`, `/result`, `/.pre-commit-config.yaml`,
+  `/.claude`, matching nixie's, now that this repo has its own Nix dev
+  tooling to generate them
 - `LICENSE.md` — BSD 2-Clause License
 - Five backup YubiKey identities added as recipients (`secrets.nix`
   `users`): `age-yubikey-identity-2ab5ff2f.txt`,
@@ -36,6 +44,12 @@ All notable changes to this project will be documented in this file.
   Never`) — `README.md` updated to reflect this
 - `README.md` — Recipients table and identity-stub references synced
   with the new recipient set in `secrets.nix`
+- `README.md` — reflowed the intro paragraph and warning list, and added
+  a blank line before "## Recipients"; pre-existing formatting the new
+  `markdownlint-cli2` hook now catches
+- `CLAUDE.md` — Conventions note updated: commit messages are now
+  actually enforced by the new commitlint hook, not just followed by
+  convention
 
 ### Removed
 

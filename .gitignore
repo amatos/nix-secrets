@@ -1,2 +1,8 @@
 # Decrypted secrets — never commit plaintext
 *.dec
+
+# Nix dev tooling artifacts — matches nixie's .gitignore
+/.direnv
+/result
+/.pre-commit-config.yaml
+/.claude
