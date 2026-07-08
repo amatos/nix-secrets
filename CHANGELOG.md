@@ -50,6 +50,10 @@ All notable changes to this project will be documented in this file.
 - `CLAUDE.md` — Conventions note updated: commit messages are now
   actually enforced by the new commitlint hook, not just followed by
   convention
+- `CLAUDE.md` — `Layout` section referenced the retired
+  `age-yubikey-identity-9ca1fbf9.txt` stub (removed below); replaced with
+  the `age-yubikey-identity-*.txt` glob so it doesn't go stale on the next
+  key rotation, matching `keytabs-matos-cc/CLAUDE.md`'s existing pattern
 
 ### Removed
 
