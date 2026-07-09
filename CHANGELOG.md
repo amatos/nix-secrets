@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Changed
+
+- `secrets.nix` — rotated the key for `codex
+
 ---
 
 ## 26.07.02
