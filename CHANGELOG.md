@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+---
+
+## 26.07.03
+
 ### Changed
 
-- `secrets.nix` — rotated the key for `codex
+- `secrets.nix` — rotated the `codex` host recipient key; all secrets
+  re-encrypted (`ragenix --rekey`) accordingly
 
 ---
 
