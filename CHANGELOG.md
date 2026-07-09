@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+---
+
+## 26.07.02
+
 ### Added
 
 - `age-yubikey-identity-b4d67c6f.txt` — YubiKey identity for `b4d67c6f`
