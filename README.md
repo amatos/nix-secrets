@@ -185,3 +185,11 @@ This installs `nixfmt`/`markdownlint-cli2`/`commitlint` pre-commit hooks into `.
 matching nixie's own hook set (`flake.nix`, `.commitlintrc.yaml`, `.markdownlint-cli2.yaml`).
 `ragenix` is not included here — it's still only in nixie's devShell
 (`nix develop /path/to/nixie`), per "Creating a new secret" above.
+
+A separate `shell.nix` (classic `nix-shell`, not part of the flake outputs above) provides
+`rage`, `age`, `age-plugin-yubikey`, and `git` for working with age/YubiKey identities directly
+in this repo without going through nixie's devShell:
+
+```bash
+nix-shell
+```

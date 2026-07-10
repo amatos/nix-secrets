@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- `shell.nix` — classic `nix-shell` environment (`rage`, `age`,
+  `age-plugin-yubikey`, `git`) for working with age/YubiKey identities
+  directly in this repo; documented in README "Development shell".
+
+### Changed
+
+- `flake.nix` — dropped the unused `self` function arg flagged by nixd.
+
 ---
 
 ## 26.07.04
