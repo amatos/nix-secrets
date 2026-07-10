@@ -168,8 +168,17 @@ Touch the YubiKey when prompted.
 A devShell is provided for this repo's own tooling (`nixfmt`, plus the pre-commit hooks below):
 
 ```bash
-cd /path/to/nix-secrets
+# Enter the dev shell (automatically via direnv, or manually)
 nix develop
+
+# Or, if direnv is installed and .envrc is allowed:
+cd nix-secrets   # shell loads automatically
+```
+
+To activate direnv:
+
+```bash
+direnv allow
 ```
 
 This installs `nixfmt`/`markdownlint-cli2`/`commitlint` pre-commit hooks into `.git/hooks`,
