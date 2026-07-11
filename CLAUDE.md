@@ -31,7 +31,10 @@ don't add it here.
 ```text
 secrets.nix                          # ragenix recipients (who can decrypt what)
 age-yubikey-identity-*.txt           # YubiKey identity stubs, not the keys
-*.age                                # age-encrypted secret files
+*.age                                # age-encrypted secrets; grouped into a
+                                      # subdir once a subsystem has 2+ files
+                                      # (github/, ldap/, unifi/, ghostty-themes)
+                                      # — true one-offs stay flat at the root
 ```
 
 ## Recipients
@@ -141,7 +144,7 @@ a PIN is required once per session for each YubiKey.
 ```bash
 age --decrypt \
   -i age-yubikey-identity-d43f4e92.txt \
-  github-ssh-key.age
+  github/ssh-key.age
 ```
 
 Touch the YubiKey when prompted.
