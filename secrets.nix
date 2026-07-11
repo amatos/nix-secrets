@@ -38,19 +38,19 @@ let
   ];
 in
 {
-  "github-ssh-key.age".publicKeys = users ++ systems;
-  "github-ratelimit.age".publicKeys = users ++ systems;
+  "github/ssh-key.age".publicKeys = users ++ systems;
+  "github/ratelimit.age".publicKeys = users ++ systems;
   "luadns.ini.age".publicKeys = users ++ systems;
   "tailscale-authkey.age".publicKeys = users ++ systems;
   "cachix-authtoken.age".publicKeys = users ++ systems;
   "default-nixos-user-password.age".publicKeys = users ++ systems;
   "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
   "smtp-relay-sasl.age".publicKeys = users ++ systems;
-  "ldap-admin-password.age".publicKeys = users ++ ldapHosts;
-  "ldap-kdc-password.age".publicKeys = users ++ ldapHosts;
-  "krb5-master-key.age".publicKeys = users ++ ldapHosts;
-  "unifi-api-key.age".publicKeys = users ++ systems;
-  "unifi-backup-ssh-key.age".publicKeys = users ++ ldapHosts;
+  "ldap/admin-password.age".publicKeys = users ++ ldapHosts;
+  "ldap/kdc-password.age".publicKeys = users ++ ldapHosts;
+  "ldap/krb5-master-key.age".publicKeys = users ++ ldapHosts;
+  "unifi/api-key.age".publicKeys = users ++ systems;
+  "unifi/backup-ssh-key.age".publicKeys = users ++ ldapHosts;
   "ghostty-themes/alucard.age".publicKeys = users ++ systems;
   "ghostty-themes/blade.age".publicKeys = users ++ systems;
   "ghostty-themes/buffy.age".publicKeys = users ++ systems;

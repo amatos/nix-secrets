@@ -13,6 +13,15 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - `flake.nix` — dropped the unused `self` function arg flagged by nixd.
+- Grouped related secrets into subdirectories: `github-ssh-key.age` →
+  `github/ssh-key.age`, `github-ratelimit.age` → `github/ratelimit.age`,
+  `unifi-api-key.age` → `unifi/api-key.age`, `unifi-backup-ssh-key.age` →
+  `unifi/backup-ssh-key.age`, `ldap-admin-password.age` →
+  `ldap/admin-password.age`, `ldap-kdc-password.age` →
+  `ldap/kdc-password.age`, `krb5-master-key.age` →
+  `ldap/krb5-master-key.age`. Matches the `ghostty-themes/` convention:
+  group once a subsystem has 2+ related files, leave singletons flat.
+  Consumers in `nixie` and `nix-kerberos-ldap` updated accordingly.
 
 ---
 

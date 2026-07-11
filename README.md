@@ -36,21 +36,26 @@ recovery key has no hardware component and is kept offline.
 
 ## Secrets
 
+Secrets are grouped into a subdirectory once a subsystem has 2+ related
+files (e.g. `github/`, `ldap/`, `unifi/`, `ghostty-themes/`); true one-off
+secrets stay flat at the repo root.
+
 | File | Purpose |
 | --- | --- |
-| `github-ssh-key.age` | SSH key for GitHub access |
-| `github-ratelimit.age` | GitHub API token (avoids Nix flake fetch rate limits) |
+| `github/ssh-key.age` | SSH key for GitHub access |
+| `github/ratelimit.age` | GitHub API token (avoids Nix flake fetch rate limits) |
 | `luadns.ini.age` | LuaDNS credentials for certbot DNS-01 challenges |
 | `tailscale-authkey.age` | Tailscale auth key for node enrollment |
 | `cachix-authtoken.age` | Cachix auth token for binary cache pushes |
 | `default-nixos-user-password.age` | Hashed default password for `root`/`nixos`/`alberth` on fresh NixOS hosts |
 | `syncthing-gui-password.age` | Syncthing GUI admin password |
 | `smtp-relay-sasl.age` | SASL credentials for the outbound SMTP relay |
-| `ldap-admin-password.age` | LDAP `cn=admin` bind password (consumed by `nix-kerberos-ldap`) |
-| `ldap-kdc-password.age` | KDC LDAP service account password (consumed by `nix-kerberos-ldap`) |
-| `krb5-master-key.age` | Kerberos KDC master key (consumed by `nix-kerberos-ldap`) |
-| `unifi-api-key.age` | UniFi read-only API token (consumed by `nixie.dyndnsLuadns`) |
-| `unifi-backup-ssh-key.age` | SSH private key for unifi.home.matos.cc; scp's UniFi's autobackup dir to porkchop (consumed by `nixie.unifiBackup`) |
+| `ldap/admin-password.age` | LDAP `cn=admin` bind password (consumed by `nix-kerberos-ldap`) |
+| `ldap/kdc-password.age` | KDC LDAP service account password (consumed by `nix-kerberos-ldap`) |
+| `ldap/krb5-master-key.age` | Kerberos KDC master key (consumed by `nix-kerberos-ldap`) |
+| `unifi/api-key.age` | UniFi read-only API token (consumed by `nixie.dyndnsLuadns`) |
+| `unifi/backup-ssh-key.age` | SSH private key for unifi.home.matos.cc; scp's UniFi's autobackup dir to porkchop (consumed by `nixie.unifiBackup`) |
+| `ghostty-themes/*.age` | Commercial Ghostty theme files (8), deployed to `~/.config/ghostty/themes/` |
 
 ---
 
@@ -156,7 +161,7 @@ git push
 ```bash
 age --decrypt \
   -i age-yubikey-identity-d43f4e92.txt \
-  github-ssh-key.age
+  github/ssh-key.age
 ```
 
 Touch the YubiKey when prompted.
