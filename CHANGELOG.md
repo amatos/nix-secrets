@@ -9,6 +9,13 @@ All notable changes to this project will be documented in this file.
 - `shell.nix` — classic `nix-shell` environment (`rage`, `age`,
   `age-plugin-yubikey`, `git`) for working with age/YubiKey identities
   directly in this repo; documented in README "Development shell".
+- `users/alberth.age`, `users/nixos.age` — login passwords for the
+  `alberth` and `nixos` user accounts.
+
+### Fixed
+
+- README "Recipients" table was missing `yubikeyb4d67c6f`, added in
+  755ba83 but never reflected in the docs.
 
 ### Changed
 

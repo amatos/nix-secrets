@@ -23,13 +23,14 @@ configuration (e.g., API tokens, passwords). All files are encrypted with
 | `yubikeybe7a2b66` | YubiKey (backup, slot 1) | `age1yubikey1qgmkn4s840hwg4kfazjn6u4r2nq9utl60chscraq4sqg9jsf0wleu5eldvv` |
 | `yubikey49705840` | YubiKey (backup, slot 1) | `age1yubikey1qtkf5924nev2a5vqncdurp729tq6xmdf27y6x95fv7kk5zje5vqr6umpnj8` |
 | `yubikey7cb1cad0` | YubiKey (backup, slot 1) | `age1yubikey1q0pmgm34s0ckw8jj9auzlvm5mc6mpxxgc5syu0aw55cqu2hnm7krqrnq60a` |
+| `yubikeyb4d67c6f` | YubiKey (backup, slot 1) | `age1yubikey1qt9a6xc0nzpe484kzeuw55hsm4shu3ug9j6m4ngtsexqrgptd6zfx596dqn` |
 | `codex` | Host key (`/etc/age/host-key`) | `age1786r092jkepdahryx7t9kru8txuvreh3f2pgtvrv3u5hmjxjjy3st9udnl` |
 | `gammu` | Host key (`/etc/age/host-key`) | `age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972` |
 | `porkchop` | Host key (`/etc/age/host-key`) | `age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz` |
 | `huginn` | Host key (`/etc/age/host-key`) | `age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux` |
 
-Five YubiKey identity stubs are stored in
-`age-yubikey-identity-{2ab5ff2f,49705840,7cb1cad0,be7a2b66,d43f4e92}.txt`,
+Six YubiKey identity stubs are stored in
+`age-yubikey-identity-{2ab5ff2f,49705840,7cb1cad0,b4d67c6f,be7a2b66,d43f4e92}.txt`,
 one per physical key. Touch policy is **cached** (one touch valid for 15
 seconds); a **PIN is required once per session** for these keys. `alberth`'s
 recovery key has no hardware component and is kept offline.
@@ -56,6 +57,8 @@ secrets stay flat at the repo root.
 | `unifi/api-key.age` | UniFi read-only API token (consumed by `nixie.dyndnsLuadns`) |
 | `unifi/backup-ssh-key.age` | SSH private key for unifi.home.matos.cc; scp's UniFi's autobackup dir to porkchop (consumed by `nixie.unifiBackup`) |
 | `ghostty-themes/*.age` | Commercial Ghostty theme files (8), deployed to `~/.config/ghostty/themes/` |
+| `users/alberth.age` | Login password for the `alberth` user account |
+| `users/nixos.age` | Login password for the `nixos` user account |
 
 ---
 

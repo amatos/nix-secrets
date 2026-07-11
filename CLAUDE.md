@@ -33,8 +33,9 @@ secrets.nix                          # ragenix recipients (who can decrypt what)
 age-yubikey-identity-*.txt           # YubiKey identity stubs, not the keys
 *.age                                # age-encrypted secrets; grouped into a
                                       # subdir once a subsystem has 2+ files
-                                      # (github/, ldap/, unifi/, ghostty-themes)
-                                      # — true one-offs stay flat at the root
+                                      # (github/, ldap/, unifi/, ghostty-themes,
+                                      # users/) — true one-offs stay flat at
+                                      # the root
 ```
 
 ## Recipients

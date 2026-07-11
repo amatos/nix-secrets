@@ -59,4 +59,6 @@ in
   "ghostty-themes/morbius.age".publicKeys = users ++ systems;
   "ghostty-themes/pro.age".publicKeys = users ++ systems;
   "ghostty-themes/van-helsing.age".publicKeys = users ++ systems;
+  "users/alberth.age".publicKeys = users ++ systems;
+  "users/nixos.age".publicKeys = users ++ systems;
 }
