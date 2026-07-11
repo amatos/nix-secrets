@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+---
+
+## 26.07.06
+
 ### Added
 
 - `.github/workflows/ci.yml` — new CI, `verify-signed-commits` job fails the
