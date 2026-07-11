@@ -51,4 +51,12 @@ in
   "krb5-master-key.age".publicKeys = users ++ ldapHosts;
   "unifi-api-key.age".publicKeys = users ++ systems;
   "unifi-backup-ssh-key.age".publicKeys = users ++ ldapHosts;
+  "ghostty-themes/alucard.age".publicKeys = users ++ systems;
+  "ghostty-themes/blade.age".publicKeys = users ++ systems;
+  "ghostty-themes/buffy.age".publicKeys = users ++ systems;
+  "ghostty-themes/dracula.age".publicKeys = users ++ systems;
+  "ghostty-themes/lincoln.age".publicKeys = users ++ systems;
+  "ghostty-themes/morbius.age".publicKeys = users ++ systems;
+  "ghostty-themes/pro.age".publicKeys = users ++ systems;
+  "ghostty-themes/van-helsing.age".publicKeys = users ++ systems;
 }
