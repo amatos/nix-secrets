@@ -96,7 +96,7 @@ a PIN is required once per session for each YubiKey.
    ```bash
    # nix-secrets
    git add my-new-secret.age secrets.nix
-   git commit -m "feat: add my-new-secret"
+   git commit -S -m "feat: add my-new-secret"
    git push
 
    # nixie — commit the module changes that reference the new secret
@@ -134,7 +134,7 @@ a PIN is required once per session for each YubiKey.
 
    ```bash
    git add -A
-   git commit -m "chore: rekey secrets for newhostname"
+   git commit -S -m "chore: rekey secrets for newhostname"
    git push
    ```
 
@@ -158,6 +158,8 @@ Touch the YubiKey when prompted.
   (`feat:`, `fix:`, `chore:`, etc.), matching nixie's style, enforced by the same
   commitlint/markdownlint-cli2/nixfmt pre-commit hooks as nixie (`flake.nix`,
   `.commitlintrc.yaml`) — run `nix develop` once to install them.
+- All commits must be GPG-signed (`git commit -S`), matching nixie's requirement.
+  Enforced in CI by the `verify-signed-commits` job in `.github/workflows/ci.yml`.
 - Never commit decrypted plaintext (`.gitignore` excludes `*.dec`) — double-check before
   `git add -A` after manual decryption for debugging.
 - Keep `README.md`'s Recipients and Secrets tables in sync with `secrets.nix` and the

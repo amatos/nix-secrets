@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- `.github/workflows/ci.yml` — new CI, `verify-signed-commits` job fails the
+  build if any commit in a push/PR has no GPG signature (`git log
+  --pretty=%G?`).
+
+### Changed
+
+- `CLAUDE.md` "Conventions" — now requires GPG-signed commits, matching
+  nixie's requirement (previously only release tags were documented as
+  signed), and documents the new CI enforcement; example `git commit`
+  commands updated to `git commit -S`.
+
 ---
 
 ## 26.07.05
