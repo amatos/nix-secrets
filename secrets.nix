@@ -10,6 +10,7 @@ let
   gammu = "age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972";
   porkchop = "age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz";
   huginn = "age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux";
+  muninn = "age1hryy6kdlt3ufej07r9rp2g8x8pm0e6ndgdyke6jdq95uchnjdghqprayh9";
 
   users = [
     alberth
@@ -25,6 +26,7 @@ let
     gammu
     porkchop
     huginn
+    muninn
   ];
   # Hosts that run Syncthing
   syncthingHosts = [
@@ -32,6 +34,7 @@ let
     gammu
     porkchop
     huginn
+    muninn
   ];
   ldapHosts = [
     porkchop
