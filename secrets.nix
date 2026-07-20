@@ -39,6 +39,11 @@ let
   ldapHosts = [
     porkchop
   ];
+  # Hosts that provide SMTP smarthost/relay services (currently porkchop only;
+  # huginn joins once it's stood up as the primary relay).
+  smtpSmartRelays = [
+    porkchop
+  ];
 in
 {
   "github/ssh-key.age".publicKeys = users ++ systems;
@@ -48,7 +53,7 @@ in
   "cachix-authtoken.age".publicKeys = users ++ systems;
   "default-nixos-user-password.age".publicKeys = users ++ systems;
   "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
-  "smtp-relay-sasl.age".publicKeys = users ++ systems;
+  "smtp-relay-sasl.age".publicKeys = users ++ smtpSmartRelays;
   "ldap/admin-password.age".publicKeys = users ++ ldapHosts;
   "ldap/kdc-password.age".publicKeys = users ++ ldapHosts;
   "ldap/krb5-master-key.age".publicKeys = users ++ ldapHosts;
