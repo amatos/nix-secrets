@@ -37,10 +37,9 @@ let
     muninn
   ];
   # ldap/*.age secrets — needed by every host currently running the KDC/LDAP
-  # server role. porkchop stays listed through the muninn migration window
-  # (Stage 2-4 of ARCHITECTURE.md §10); drop it once porkchop is decommissioned.
+  # server role. muninn is now the sole KDC/LDAP host — porkchop was dropped
+  # after Stage 4 of the migration in nixie's ARCHITECTURE.md §10.
   ldapHosts = [
-    porkchop
     muninn
   ];
   # unifi/backup-ssh-key.age — split out from ldapHosts, since unifi-backup
