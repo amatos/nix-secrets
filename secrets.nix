@@ -47,10 +47,11 @@ let
   unifiBackupHosts = [
     porkchop
   ];
-  # Hosts that provide SMTP smarthost/relay services (currently porkchop only;
-  # huginn joins once it's stood up as the primary relay).
+  # Hosts that provide SMTP smarthost/relay services — huginn (primary) and
+  # porkchop (backup), per Stage 5/6 of nixie's ARCHITECTURE.md §10.
   smtpSmartRelays = [
     porkchop
+    huginn
   ];
   # Hosts that act as a Nix remote-build client (i.e. need the SSH private
   # key for a remote builder). Not the builder itself — gammu only needs the
