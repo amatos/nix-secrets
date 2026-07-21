@@ -56,6 +56,7 @@ secrets stay flat at the repo root.
 | `ldap/krb5-master-key.age` | Kerberos KDC master key (consumed by `nix-kerberos-ldap`) |
 | `unifi/api-key.age` | UniFi read-only API token (consumed by `nixie.dyndnsLuadns`) |
 | `unifi/backup-ssh-key.age` | SSH private key for unifi.home.matos.cc; scp's UniFi's autobackup dir to porkchop (consumed by `nixie.unifiBackup`) |
+| `builder/codex-ssh-key.age` | SSH private key codex uses as a Nix remote-build client against gammu (consumed by `modules/darwin/remote-build-client.nix`) |
 | `ghostty-themes/*.age` | Commercial Ghostty theme files (8), deployed to `~/.config/ghostty/themes/` |
 | `users/alberth.age` | Login password for the `alberth` user account |
 | `users/nixos.age` | Login password for the `nixos` user account |

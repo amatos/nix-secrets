@@ -44,6 +44,12 @@ let
   smtpSmartRelays = [
     porkchop
   ];
+  # Hosts that act as a Nix remote-build client (i.e. need the SSH private
+  # key for a remote builder). Not the builder itself — gammu only needs the
+  # (non-secret) public key, inlined directly in nixie.
+  remoteBuildHosts = [
+    codex
+  ];
 in
 {
   "github/ssh-key.age".publicKeys = users ++ systems;
@@ -59,6 +65,7 @@ in
   "ldap/krb5-master-key.age".publicKeys = users ++ ldapHosts;
   "unifi/api-key.age".publicKeys = users ++ systems;
   "unifi/backup-ssh-key.age".publicKeys = users ++ ldapHosts;
+  "builder/codex-ssh-key.age".publicKeys = users ++ remoteBuildHosts;
   "ghostty-themes/alucard.age".publicKeys = users ++ systems;
   "ghostty-themes/blade.age".publicKeys = users ++ systems;
   "ghostty-themes/buffy.age".publicKeys = users ++ systems;
