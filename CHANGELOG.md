@@ -6,6 +6,42 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 26.07.07
+
+### Added
+
+- `secrets.nix` — added `builder/codex-ssh-key.age`, an SSH private key
+  letting codex (aarch64-darwin) connect to gammu's `remotebuild` user as
+  a remote `x86_64-linux` builder, needed since nix-darwin's own
+  `nix.buildMachines` is inert under Determinate.
+- `secrets.nix` — added the `muninn` recipient key.
+
+### Changed
+
+- `secrets.nix` — scoped `smtp-relay-sasl.age` to a new `smtpSmartRelays`
+  group (previously the broad `users`+`systems` group granted every host
+  decrypt access regardless of whether it ran the relay); all secrets
+  re-encrypted (`ragenix --rekey`) accordingly.
+- `secrets.nix` — added `muninn` to `ldapHosts` (Stage 2 of nixie's
+  porkchop service realignment, ARCHITECTURE.md §10) and split
+  `unifi/backup-ssh-key.age` out into its own `unifiBackupHosts` group —
+  it had been piggybacking on `ldapHosts` only because porkchop happened
+  to be in both; all secrets re-encrypted (`ragenix --rekey`) accordingly.
+- `secrets.nix` — dropped porkchop from `ldapHosts` (Stage 4: its
+  Kerberos+LDAP role is decommissioned, muninn is now the sole entry) and
+  revoked its decrypt access to `ldap/admin-password.age`,
+  `ldap/kdc-password.age`, `ldap/krb5-master-key.age` (`ragenix --rekey`).
+- `secrets.nix` — added huginn to `smtpSmartRelays` (Stage 5: huginn is
+  now the primary SMTP relay, porkchop the backup) and granted it decrypt
+  access to `smtp-relay-sasl.age` (`ragenix --rekey`).
+
+### Fixed
+
+- `README.md` — Recipients table had codex's pre-rotation age key (no
+  longer matching `secrets.nix`) and was missing a row for muninn.
+
+---
+
 ## 26.07.06
 
 ### Added
