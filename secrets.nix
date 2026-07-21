@@ -36,7 +36,16 @@ let
     huginn
     muninn
   ];
+  # ldap/*.age secrets — needed by every host currently running the KDC/LDAP
+  # server role. porkchop stays listed through the muninn migration window
+  # (Stage 2-4 of ARCHITECTURE.md §10); drop it once porkchop is decommissioned.
   ldapHosts = [
+    porkchop
+    muninn
+  ];
+  # unifi/backup-ssh-key.age — split out from ldapHosts, since unifi-backup
+  # runs on porkchop for reasons unrelated to whether it also hosts LDAP.
+  unifiBackupHosts = [
     porkchop
   ];
   # Hosts that provide SMTP smarthost/relay services (currently porkchop only;
@@ -64,7 +73,7 @@ in
   "ldap/kdc-password.age".publicKeys = users ++ ldapHosts;
   "ldap/krb5-master-key.age".publicKeys = users ++ ldapHosts;
   "unifi/api-key.age".publicKeys = users ++ systems;
-  "unifi/backup-ssh-key.age".publicKeys = users ++ ldapHosts;
+  "unifi/backup-ssh-key.age".publicKeys = users ++ unifiBackupHosts;
   "builder/codex-ssh-key.age".publicKeys = users ++ remoteBuildHosts;
   "ghostty-themes/alucard.age".publicKeys = users ++ systems;
   "ghostty-themes/blade.age".publicKeys = users ++ systems;
