@@ -37,7 +37,9 @@ keys:
   - &codex_ssh age1dq4gttszvhkf5j6kcvquggnc7a4vxrwgyk6k4ldxmmpekc7pzupqegqrdm
   - &gammu age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972
   - &porkchop age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz
+  - &porkchop_ssh age1qytulrl6hskztw95hzcjlwgyswzua9v38xrdl56phhctkudc2pxqlekktk
   - &huginn age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux
+  - &huginn_ssh age1j0plfmmtayqhn4dcce0h7z4fapyra2t22wjwk2e3vz57njf34p7qryg2yg
   - &muninn age1hryy6kdlt3ufej07r9rp2g8x8pm0e6ndgdyke6jdq95uchnjdghqprayh9
 
 creation_rules:
@@ -82,8 +84,11 @@ creation_rules:
           - *yubikey_b4d67c6f
           - *porkchop
 
-  # smtpSmartRelays — huginn (primary) + porkchop (backup)
-  - path_regex: ^smtp-relay-sasl.*$
+  # smtpSmartRelays (Step 12) — huginn (primary) + porkchop (backup), using
+  # their real ssh-to-age-derived keys, not the legacy ragenix *porkchop/
+  # *huginn anchors (those stay in the fleet-wide catch-all below for
+  # not-yet-migrated secrets).
+  - path_regex: ^smtp-relay-sasl\.yaml$
     key_groups:
       - age:
           - *alberth
@@ -93,8 +98,8 @@ creation_rules:
           - *yubikey_49705840
           - *yubikey_7cb1cad0
           - *yubikey_b4d67c6f
-          - *porkchop
-          - *huginn
+          - *porkchop_ssh
+          - *huginn_ssh
 
   # remoteBuildHosts — codex is the remote-build client
   - path_regex: ^builder/codex-ssh-key.*$
