@@ -182,6 +182,71 @@ creation_rules:
           - *yubikey_0634d1c4
           - *porkchop_ssh
 
+  # Host keytabs (Phase 4, Step 19/20) — binary Kerberos keytabs, one file
+  # per host (Step 7's carve-out: binary content doesn't consolidate the
+  # way text secrets do). Each scoped to users + that host's real
+  # ssh-to-age key only, not the shared fleet-wide group below.
+  - path_regex: ^keytab-codex\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *codex_ssh
+  - path_regex: ^keytab-gammu\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *gammu_ssh
+  - path_regex: ^keytab-porkchop\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *porkchop_ssh
+  - path_regex: ^keytab-huginn\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *huginn_ssh
+  - path_regex: ^keytab-muninn\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *muninn_ssh
+
   # Fleet-wide catch-all — users ++ systems (also covers syncthingHosts,
   # which is currently identical to systems). Must stay last: sops uses
   # first-matching-rule-wins, so this is the fallback for every path not
