@@ -4,12 +4,23 @@
 # where secrets actually get encrypted/edited going forward.
 #
 # Per-host keys below are still the legacy ragenix-derived host keys except
-# *codex_ssh, which is codex's real ssh-to-age-derived key (Step 8's decided
-# identity source) — codex is the only host wired up for the Step 9 PoC so
-# far. The rest get re-derived via ssh-to-age in Phase 3 batches; until then
-# the fleet-wide catch-all rule still lists the old *gammu/*porkchop/*huginn/
-# *muninn ragenix keys unchanged, since real migration for those hasn't
-# happened yet.
+# *codex_ssh, which is codex's real SSH host public key used directly as the
+# age recipient string (Step 8's decided identity source) — codex is the
+# only host wired up for the Step 9 PoC so far. The rest get switched over in
+# Phase 3 batches; until then the fleet-wide catch-all rule still lists the
+# old *gammu/*porkchop/*huginn/*muninn ragenix keys unchanged, since real
+# migration for those hasn't happened yet.
+#
+# IMPORTANT — do NOT use the standalone `ssh-to-age` CLI to compute these.
+# It implements its own ed25519→X25519 conversion (depends only on
+# filippo.io/edwards25519, not filippo.io/age) which produces a DIFFERENT,
+# incompatible recipient than what `age`/`sops` compute internally via
+# filippo.io/age's own SSH support — confirmed by testing both round-trip
+# paths directly. `age` and `sops` both accept a raw SSH public key string
+# (`ssh-ed25519 AAAA...`, straight from the `.pub` file, no conversion) as a
+# recipient directly, and that's the only form confirmed to actually decrypt
+# via `SOPS_AGE_SSH_PRIVATE_KEY_FILE` / sops-nix's `sops.age.sshKeyPaths`.
+# See SOPS_MIGRATION.md's Step 9 notes for the full diagnosis.
 keys:
   - &alberth age1gp5d3tzdpufcrk7f6dkr92xtx2p847k79kxxdp9nn0yjk2qvw34sws84m7
   - &yubikey_d43f4e92 age1yubikey1qdxkz5rs00du7y4284ehlkktq0h93wsqszwegjrx97scqs8ptq3f6kws7sq
@@ -19,7 +30,7 @@ keys:
   - &yubikey_7cb1cad0 age1yubikey1q0pmgm34s0ckw8jj9auzlvm5mc6mpxxgc5syu0aw55cqu2hnm7krqrnq60a
   - &yubikey_b4d67c6f age1yubikey1qt9a6xc0nzpe484kzeuw55hsm4shu3ug9j6m4ngtsexqrgptd6zfx596dqn
   - &codex age1yl42nc3qmtper3vt7am3f2u6f2afp7scu2nqxfqjlw4qn64qeaqq20xkcc
-  - &codex_ssh age1dq4gttszvhkf5j6kcvquggnc7a4vxrwgyk6k4ldxmmpekc7pzupqegqrdm
+  - &codex_ssh "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJYieoW7wDTaRpnmb2Tpn4ZnNpUAG6K8tVb/ABJk31yz"
   - &gammu age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972
   - &porkchop age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz
   - &huginn age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux
