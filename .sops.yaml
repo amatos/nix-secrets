@@ -94,7 +94,21 @@ creation_rules:
           - *yubikey_b4d67c6f
           - *muninn
 
-  # unifiBackupHosts — unifi-backup runs on porkchop
+  # unifiBackupHosts (Step 14) — unifi-backup runs on porkchop, using its
+  # real ssh-to-age-derived key, not the legacy *porkchop anchor.
+  - path_regex: ^unifi-backup-ssh-key\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *porkchop_ssh
+  # unifiBackupHosts (legacy, per-file .age) — still in use until cutover completes
   - path_regex: ^unifi/backup-ssh-key.*$
     key_groups:
       - age:
