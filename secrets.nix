@@ -49,7 +49,6 @@ in
   "luadns.ini.age".publicKeys = users ++ systems;
   "tailscale-authkey.age".publicKeys = users ++ systems;
   "cachix-authtoken.age".publicKeys = users ++ systems;
-  "default-nixos-user-password.age".publicKeys = users ++ systems;
   "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
   "ldap/admin-password.age".publicKeys = users ++ ldapHosts;
   "ldap/kdc-password.age".publicKeys = users ++ ldapHosts;

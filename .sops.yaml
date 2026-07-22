@@ -37,6 +37,7 @@ keys:
   - &codex age1yl42nc3qmtper3vt7am3f2u6f2afp7scu2nqxfqjlw4qn64qeaqq20xkcc
   - &codex_ssh age1dq4gttszvhkf5j6kcvquggnc7a4vxrwgyk6k4ldxmmpekc7pzupqegqrdm
   - &gammu age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972
+  - &gammu_ssh age1c2cmluquave5rmzequv7tea7c8zvt37yuml57vcd9qvvlla98qvsww99w0
   - &porkchop age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz
   - &porkchop_ssh age1qytulrl6hskztw95hzcjlwgyswzua9v38xrdl56phhctkudc2pxqlekktk
   - &huginn age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux
@@ -45,10 +46,8 @@ keys:
   - &muninn_ssh age16vynhfk26c2z9tq6xh53skcwm4lqfwx5qr2cwjng3hlgj8hssp9qyncpnm
 
 creation_rules:
-  # Step 9 PoC — ghostty-themes.yaml's "dracula" key, scoped to just users +
-  # codex's real ssh-to-age key (not the full fleet-wide *codex/*gammu/etc.
-  # group below) to keep this PoC's blast radius to the one host it's
-  # actually validated on. Must precede the fleet-wide catch-all rule.
+  # ghostty-themes.yaml (Step 17) — widened from Step 9's codex-only PoC
+  # scope to the full fleet, using each host's real ssh-to-age key.
   - path_regex: ^ghostty-themes\.yaml$
     key_groups:
       - age:
@@ -59,7 +58,32 @@ creation_rules:
           - *yubikey_49705840
           - *yubikey_7cb1cad0
           - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
           - *codex_ssh
+          - *gammu_ssh
+          - *porkchop_ssh
+          - *huginn_ssh
+          - *muninn_ssh
+  # fleet-secrets.yaml (Step 17) — remaining users++systems-scoped secrets
+  # (github-ratelimit, github-ssh-key, unifi-api-key, tailscale-authkey,
+  # cachix-authtoken, luadns-ini, user-password-alberth, user-password-nixos,
+  # syncthing-gui-password), using each host's real ssh-to-age key.
+  - path_regex: ^fleet-secrets\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *codex_ssh
+          - *gammu_ssh
+          - *porkchop_ssh
+          - *huginn_ssh
+          - *muninn_ssh
   # ldapHosts (Step 13) — muninn's KDC/LDAP boot-time secrets
   # (highest-consequence group). Consolidated into a single ldap.yaml per
   # Step 7's decision (admin-password, kdc-password, krb5-master-key are all
