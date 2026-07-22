@@ -59,6 +59,11 @@ let
   remoteBuildHosts = [
     codex
   ];
+  # Hosts that run Grafana (Stage 7b of nixie's ARCHITECTURE.md §10 —
+  # centralized log review UI on top of the porkchop syslog receiver).
+  grafanaHosts = [
+    porkchop
+  ];
 in
 {
   "github/ssh-key.age".publicKeys = users ++ systems;
@@ -75,6 +80,7 @@ in
   "unifi/api-key.age".publicKeys = users ++ systems;
   "unifi/backup-ssh-key.age".publicKeys = users ++ unifiBackupHosts;
   "builder/codex-ssh-key.age".publicKeys = users ++ remoteBuildHosts;
+  "grafana-secret-key.age".publicKeys = users ++ grafanaHosts;
   "ghostty-themes/alucard.age".publicKeys = users ++ systems;
   "ghostty-themes/blade.age".publicKeys = users ++ systems;
   "ghostty-themes/buffy.age".publicKeys = users ++ systems;
