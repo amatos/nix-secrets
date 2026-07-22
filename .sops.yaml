@@ -127,8 +127,10 @@ creation_rules:
           - *porkchop_ssh
           - *huginn_ssh
 
-  # remoteBuildHosts — codex is the remote-build client
-  - path_regex: ^builder/codex-ssh-key.*$
+  # remoteBuildHosts (Step 15) — codex is the remote-build client, using its
+  # real ssh-to-age-derived key (*codex_ssh, already derived in Step 9/10),
+  # not the legacy *codex anchor.
+  - path_regex: ^builder-codex-ssh-key\.yaml$
     key_groups:
       - age:
           - *alberth
@@ -138,7 +140,8 @@ creation_rules:
           - *yubikey_49705840
           - *yubikey_7cb1cad0
           - *yubikey_b4d67c6f
-          - *codex
+          - *yubikey_0634d1c4
+          - *codex_ssh
 
   # grafanaHosts (Step 16) — Grafana runs on porkchop, using its real
   # ssh-to-age-derived key, not the legacy *porkchop anchor.
