@@ -33,6 +33,7 @@ keys:
   - &yubikey_49705840 age1yubikey1qtkf5924nev2a5vqncdurp729tq6xmdf27y6x95fv7kk5zje5vqr6umpnj8
   - &yubikey_7cb1cad0 age1yubikey1q0pmgm34s0ckw8jj9auzlvm5mc6mpxxgc5syu0aw55cqu2hnm7krqrnq60a
   - &yubikey_b4d67c6f age1yubikey1qt9a6xc0nzpe484kzeuw55hsm4shu3ug9j6m4ngtsexqrgptd6zfx596dqn
+  - &yubikey_0634d1c4 age1yubikey1qv0utu8hcayj3xeppwjuckzmrgd0ltjuq59ffmwd6t9f2m7depa2sl0ne87
   - &codex age1yl42nc3qmtper3vt7am3f2u6f2afp7scu2nqxfqjlw4qn64qeaqq20xkcc
   - &codex_ssh age1dq4gttszvhkf5j6kcvquggnc7a4vxrwgyk6k4ldxmmpekc7pzupqegqrdm
   - &gammu age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972
@@ -98,6 +99,7 @@ creation_rules:
           - *yubikey_49705840
           - *yubikey_7cb1cad0
           - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
           - *porkchop_ssh
           - *huginn_ssh
 
@@ -114,8 +116,9 @@ creation_rules:
           - *yubikey_b4d67c6f
           - *codex
 
-  # grafanaHosts — Grafana runs on porkchop
-  - path_regex: ^grafana-secret-key.*$
+  # grafanaHosts (Step 16) — Grafana runs on porkchop, using its real
+  # ssh-to-age-derived key, not the legacy *porkchop anchor.
+  - path_regex: ^grafana-secret-key\.yaml$
     key_groups:
       - age:
           - *alberth
@@ -125,7 +128,8 @@ creation_rules:
           - *yubikey_49705840
           - *yubikey_7cb1cad0
           - *yubikey_b4d67c6f
-          - *porkchop
+          - *yubikey_0634d1c4
+          - *porkchop_ssh
 
   # Fleet-wide catch-all — users ++ systems (also covers syncthingHosts,
   # which is currently identical to systems). Must stay last: sops uses
