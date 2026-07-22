@@ -47,22 +47,11 @@ let
   unifiBackupHosts = [
     porkchop
   ];
-  # Hosts that provide SMTP smarthost/relay services — huginn (primary) and
-  # porkchop (backup), per Stage 5/6 of nixie's ARCHITECTURE.md §10.
-  smtpSmartRelays = [
-    porkchop
-    huginn
-  ];
   # Hosts that act as a Nix remote-build client (i.e. need the SSH private
   # key for a remote builder). Not the builder itself — gammu only needs the
   # (non-secret) public key, inlined directly in nixie.
   remoteBuildHosts = [
     codex
-  ];
-  # Hosts that run Grafana (Stage 7b of nixie's ARCHITECTURE.md §10 —
-  # centralized log review UI on top of the porkchop syslog receiver).
-  grafanaHosts = [
-    porkchop
   ];
 in
 {
@@ -73,14 +62,12 @@ in
   "cachix-authtoken.age".publicKeys = users ++ systems;
   "default-nixos-user-password.age".publicKeys = users ++ systems;
   "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
-  "smtp-relay-sasl.age".publicKeys = users ++ smtpSmartRelays;
   "ldap/admin-password.age".publicKeys = users ++ ldapHosts;
   "ldap/kdc-password.age".publicKeys = users ++ ldapHosts;
   "ldap/krb5-master-key.age".publicKeys = users ++ ldapHosts;
   "unifi/api-key.age".publicKeys = users ++ systems;
   "unifi/backup-ssh-key.age".publicKeys = users ++ unifiBackupHosts;
   "builder/codex-ssh-key.age".publicKeys = users ++ remoteBuildHosts;
-  "grafana-secret-key.age".publicKeys = users ++ grafanaHosts;
   "ghostty-themes/alucard.age".publicKeys = users ++ systems;
   "ghostty-themes/blade.age".publicKeys = users ++ systems;
   "ghostty-themes/buffy.age".publicKeys = users ++ systems;
