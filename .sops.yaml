@@ -108,18 +108,6 @@ creation_rules:
           - *yubikey_b4d67c6f
           - *yubikey_0634d1c4
           - *porkchop_ssh
-  # unifiBackupHosts (legacy, per-file .age) — still in use until cutover completes
-  - path_regex: ^unifi/backup-ssh-key.*$
-    key_groups:
-      - age:
-          - *alberth
-          - *yubikey_d43f4e92
-          - *yubikey_2ab5ff2f
-          - *yubikey_be7a2b66
-          - *yubikey_49705840
-          - *yubikey_7cb1cad0
-          - *yubikey_b4d67c6f
-          - *porkchop
 
   # smtpSmartRelays (Step 12) — huginn (primary) + porkchop (backup), using
   # their real ssh-to-age-derived keys, not the legacy ragenix *porkchop/
