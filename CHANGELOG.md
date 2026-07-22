@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- `age-yubikey-identity-0634d1c4.txt` — YubiKey identity stub for `yubikey0634d1c4`
+
+### Removed
+
+- `age-yubikey-identity-d43f4e92.txt` — retired YubiKey identity stub
+
 ---
 
 ## 26.07.07
