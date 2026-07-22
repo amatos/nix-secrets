@@ -21,21 +21,6 @@ let
     yubikey7cb1cad0
     yubikeyb4d67c6f
   ];
-  systems = [
-    codex
-    gammu
-    porkchop
-    huginn
-    muninn
-  ];
-  # Hosts that run Syncthing
-  syncthingHosts = [
-    codex
-    gammu
-    porkchop
-    huginn
-    muninn
-  ];
   # ldap/*.age secrets — needed by every host currently running the KDC/LDAP
   # server role. muninn is now the sole KDC/LDAP host — porkchop was dropped
   # after Stage 4 of the migration in nixie's ARCHITECTURE.md §10.
@@ -44,24 +29,7 @@ let
   ];
 in
 {
-  "github/ssh-key.age".publicKeys = users ++ systems;
-  "github/ratelimit.age".publicKeys = users ++ systems;
-  "luadns.ini.age".publicKeys = users ++ systems;
-  "tailscale-authkey.age".publicKeys = users ++ systems;
-  "cachix-authtoken.age".publicKeys = users ++ systems;
-  "syncthing-gui-password.age".publicKeys = users ++ syncthingHosts;
   "ldap/admin-password.age".publicKeys = users ++ ldapHosts;
   "ldap/kdc-password.age".publicKeys = users ++ ldapHosts;
   "ldap/krb5-master-key.age".publicKeys = users ++ ldapHosts;
-  "unifi/api-key.age".publicKeys = users ++ systems;
-  "ghostty-themes/alucard.age".publicKeys = users ++ systems;
-  "ghostty-themes/blade.age".publicKeys = users ++ systems;
-  "ghostty-themes/buffy.age".publicKeys = users ++ systems;
-  "ghostty-themes/dracula.age".publicKeys = users ++ systems;
-  "ghostty-themes/lincoln.age".publicKeys = users ++ systems;
-  "ghostty-themes/morbius.age".publicKeys = users ++ systems;
-  "ghostty-themes/pro.age".publicKeys = users ++ systems;
-  "ghostty-themes/van-helsing.age".publicKeys = users ++ systems;
-  "users/alberth.age".publicKeys = users ++ systems;
-  "users/nixos.age".publicKeys = users ++ systems;
 }
