@@ -42,6 +42,7 @@ keys:
   - &huginn age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux
   - &huginn_ssh age1j0plfmmtayqhn4dcce0h7z4fapyra2t22wjwk2e3vz57njf34p7qryg2yg
   - &muninn age1hryy6kdlt3ufej07r9rp2g8x8pm0e6ndgdyke6jdq95uchnjdghqprayh9
+  - &muninn_ssh age16vynhfk26c2z9tq6xh53skcwm4lqfwx5qr2cwjng3hlgj8hssp9qyncpnm
 
 creation_rules:
   # Step 9 PoC — ghostty-themes.yaml's "dracula" key, scoped to just users +
@@ -59,7 +60,28 @@ creation_rules:
           - *yubikey_7cb1cad0
           - *yubikey_b4d67c6f
           - *codex_ssh
-  # ldapHosts — muninn's KDC/LDAP boot-time secrets (highest-consequence group)
+  # ldapHosts (Step 13) — muninn's KDC/LDAP boot-time secrets
+  # (highest-consequence group). Consolidated into a single ldap.yaml per
+  # Step 7's decision (admin-password, kdc-password, krb5-master-key are all
+  # plain text and share this exact recipient set — confirmed by decrypting
+  # and checking for non-printable bytes before assuming otherwise).
+  # PoC-only for now (Step 13 deferred full cutover to Phase 5, since the
+  # actual consuming code lives in the external nix-kerberos-ldap repo, not
+  # here) — *muninn_ssh is deployed alongside, not replacing, the legacy
+  # *muninn ragenix anchor still used by the old ^ldap/.*$ per-file secrets.
+  - path_regex: ^ldap\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *muninn_ssh
+  # ldapHosts (legacy, per-file .age) — still in use until Phase 5 completes
   - path_regex: ^ldap/.*$
     key_groups:
       - age:
