@@ -247,6 +247,22 @@ creation_rules:
           - *yubikey_0634d1c4
           - *muninn_ssh
 
+  # LDAP SASL keytab (Phase 4, Step 21) — binary, PoC-only like Step 13's
+  # ldap.yaml: the real consuming code (age.secrets.ldapSaslKeytab) lives in
+  # the external nix-kerberos-ldap repo, deferred to Phase 5.
+  - path_regex: ^keytab-ldap-muninn\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *muninn_ssh
+
   # Fleet-wide catch-all — users ++ systems (also covers syncthingHosts,
   # which is currently identical to systems). Must stay last: sops uses
   # first-matching-rule-wins, so this is the fallback for every path not
