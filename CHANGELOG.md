@@ -4,13 +4,44 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+---
+
+## 26.07.08
+
 ### Added
 
 - `age-yubikey-identity-0634d1c4.txt` — YubiKey identity stub for `yubikey0634d1c4`
+- Migrated encryption from [ragenix](https://github.com/yaxitech/ragenix) to
+  [sops](https://github.com/getsops/sops) (via
+  [sops-nix](https://github.com/Mic92/sops-nix) on the consuming/nixie side), still backed by
+  [age](https://github.com/FiloSottile/age). `.sops.yaml` (`path_regex` rules, `key_groups`)
+  replaces `secrets.nix` as the recipients manifest. Related secrets that share a recipient set
+  are now grouped as multiple top-level keys in one YAML document instead of one `.age` file per
+  secret: `fleet-secrets.yaml`, `ldap.yaml`, `ghostty-themes.yaml`, `smtp-relay-sasl.yaml`,
+  `unifi-backup-ssh-key.yaml`, `builder-codex-ssh-key.yaml`, `grafana-secret-key.yaml`. Binary
+  keytabs keep the `.age` extension by convention but are now sops's binary envelope format.
+- Per-host recipients are now each host's real SSH host key
+  (`/etc/ssh/ssh_host_ed25519_key.pub`) converted to age's X25519 form via `ssh-to-age`
+  (`*codex_ssh`, `*gammu_ssh`, `*porkchop_ssh`, `*huginn_ssh`, `*muninn_ssh`), replacing the old
+  ragenix-generated `/etc/age/host-key` per-host identity — there is no separate host identity
+  file or generation step anymore.
+- `CLAUDE.md`/`README.md` rewritten for the sops workflow, including sections this repo never
+  had under ragenix: updating an existing secret's content, and adding/removing a recipient
+  (`sops updatekeys`).
+- `sops`/`ssh-to-age` added to `shell.nix`, so the documented manual-decrypt workflow works
+  standalone, not just via `nix develop /path/to/nixie`.
 
 ### Removed
 
-- `age-yubikey-identity-d43f4e92.txt` — retired YubiKey identity stub
+- `age-yubikey-identity-d43f4e92.txt` — retired YubiKey identity stub. Removed as a `.sops.yaml`
+  recipient from every secret via `sops updatekeys` (the migration branch's `.sops.yaml` had been
+  built before this identity's retirement and had drifted from `secrets.nix`, which already
+  reflected it — caught during pre-merge review).
+- Every legacy `ragenix`-encrypted `.age` file superseded by the sops-encrypted equivalent
+  above. `secrets.nix` itself is kept (now empty) rather than deleted, for whenever a new
+  ragenix-only secret needs this repo again.
+
+See `nixie`'s `SOPS_MIGRATION.md` for the full 8-phase migration record.
 
 ---
 
