@@ -10,21 +10,23 @@ of the phrasing reads.
 
 ## What this is
 
-nix-secrets holds sops-encrypted **text** secrets (SSH keys, tokens, passwords, `.ini`
-credentials) for the [nixie](https://github.com/amatos/nixie) NixOS + nix-darwin
-configuration. It is a plain git repo, not a flake (`flake = false` in nixie's
-`flake.nix`), referenced there as the `nix-secrets` input.
+nix-secrets holds sops-encrypted secrets — both **text** (SSH keys, tokens, passwords, `.ini`
+credentials) and **binary** (Kerberos keytabs) — for the
+[nixie](https://github.com/amatos/nixie) NixOS + nix-darwin configuration. It is a plain git
+repo, not a flake (`flake = false` in nixie's `flake.nix`), referenced there as the
+`nix-secrets` input.
 
 All files are encrypted with [sops](https://github.com/getsops/sops) (via
 [sops-nix](https://github.com/Mic92/sops-nix) on the consuming/nixie side), using
 [age](https://github.com/FiloSottile/age) as the underlying crypto backend, and
 decryptable only by the recipients declared in `.sops.yaml`.
 
-**Binary secrets do not belong here.** Git diffs binary files poorly and they don't
-share this repo's plaintext-editing workflow. Kerberos keytabs live in the dedicated
-[`nix-keytabs-matos-cc`](https://github.com/amatos/nix-keytabs-matos-cc) repo instead. If a new
-binary secret type is needed, create another dedicated repo following that pattern —
-don't add it here.
+Text secrets are edited in place with `sops <file>` (opens `$EDITOR` on plaintext YAML). Binary
+secrets (keytabs) use `sops --input-type binary --output-type binary <file>` and
+`sops.secrets.<name>.format = "binary"` on the consuming/nixie side, keeping the `keytab-*.age`
+naming convention. There used to be a separate repo (`nix-keytabs-matos-cc`) for binary secrets
+— retired, since sops-encrypted content is opaque ciphertext regardless of the plaintext's
+original type, so the split never bought a real diffing benefit. Everything lives here now.
 
 ---
 
@@ -37,8 +39,8 @@ age-yubikey-identity-*.txt # YubiKey identity stubs, not the keys
                             # per subsystem/group (fleet-secrets.yaml,
                             # ldap.yaml, ghostty-themes.yaml, ...)
 keytab-*.age                # sops-encrypted binary Kerberos keytabs (still
-                             # named .age by convention — see
-                             # nix-keytabs-matos-cc for the rest of this type)
+                             # named .age by convention, though the content
+                             # is sops's binary envelope, not raw age output)
 ```
 
 Unlike the old per-file-per-secret layout, sops's native multi-key YAML documents mean related
@@ -228,8 +230,8 @@ Releases use CalVer, matching nixie: `yy.mm.release` (e.g. `26.07.01`).
 
 ## Before making changes
 
-1. Check whether the secret is binary — if so it belongs in `nix-keytabs-matos-cc`
-   (or another dedicated repo), not here.
+1. If the secret is binary, use `sops --input-type binary --output-type binary` and
+   `format = "binary"` on the consuming side — same repo, different flags, not a different repo.
 2. Check `.sops.yaml` before adding a new rule/anchor — the recipient scope you need
    (the YubiKey identities, a specific host's `*_ssh` anchor, the fleet-wide catch-all, ...) may
    already exist.

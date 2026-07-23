@@ -1,16 +1,14 @@
 # nix-secrets/README.md
 
-This repository is dedicated to storing plain text secrets required by the `nixie`
-configuration (e.g., API tokens, passwords). All files are encrypted with
+This repository stores secrets required by the `nixie` configuration — both text (e.g. API
+tokens, passwords) and binary (Kerberos keytabs). All files are encrypted with
 [sops](https://github.com/getsops/sops) (via [sops-nix](https://github.com/Mic92/sops-nix) on
 the consuming/nixie side), using [age](https://github.com/FiloSottile/age) as the underlying
 crypto backend, and decryptable only by the recipients listed in `.sops.yaml`.
 
-> **🚨 IMPORTANT:** This repository is for **TEXT** credentials ONLY.
->
-> 1. **Binary secrets (like Kerberos keytabs):** Must go into
->    [`nix-keytabs-matos-cc`](https://github.com/amatos/nix-keytabs-matos-cc).
-> 2. **Non-credential binary data:** Should be handled via dedicated tooling, not stored here.
+> **Note:** non-credential binary data (large files unrelated to authentication/secrets) should
+> still be handled via dedicated tooling, not stored here — this repo is for secrets only,
+> regardless of whether they're text or binary.
 
 ## Recipients
 
@@ -46,9 +44,9 @@ at activation time via `sops.age.sshKeyPaths` and decrypts directly.
 ## Secrets
 
 Related secrets that share a recipient set are grouped as multiple top-level keys inside one
-sops-encrypted YAML file, rather than one file per secret. Binary content (keytabs, in the
-sibling `nix-keytabs-matos-cc` repo) keeps the `.age` extension by convention even though it's
-sops's binary envelope format, not raw ragenix/age output.
+sops-encrypted YAML file, rather than one file per secret. Binary content (keytabs) keeps the
+`.age` extension by convention even though it's sops's binary envelope format, not raw
+ragenix/age output.
 
 | File | Purpose |
 | --- | --- |
@@ -195,8 +193,8 @@ sops --decrypt fleet-secrets.yaml
 ```
 
 Touch the YubiKey when prompted (not needed for `age-yubikey-identity-0634d1c4.txt`, the
-non-interactive safe identity — see "Recipients" above). For a binary secret (a keytab in
-`nix-keytabs-matos-cc`), add `--input-type binary --output-type binary`.
+non-interactive safe identity — see "Recipients" above). For a binary secret (a keytab),
+add `--input-type binary --output-type binary`.
 
 ---
 
