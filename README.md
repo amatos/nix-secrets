@@ -17,7 +17,6 @@ crypto backend, and decryptable only by the recipients listed in `.sops.yaml`.
 | Name | Type | Key |
 | --- | --- | --- |
 | `alberth` | Recovery key (offline, no hardware) | `age1gp5d3tzdpufcrk7f6dkr92xtx2p847k79kxxdp9nn0yjk2qvw34sws84m7` |
-| `yubikey_d43f4e92` | YubiKey (touch + PIN) | `age1yubikey1qdxkz5rs00du7y4284ehlkktq0h93wsqszwegjrx97scqs8ptq3f6kws7sq` |
 | `yubikey_2ab5ff2f` | YubiKey (touch + PIN) | `age1yubikey1qtn8y2ad0vr9ddazfsxy4fmlt64kknhjsll2xvfgekck3n0dc0xjvf5rah6` |
 | `yubikey_be7a2b66` | YubiKey (touch + PIN) | `age1yubikey1qgmkn4s840hwg4kfazjn6u4r2nq9utl60chscraq4sqg9jsf0wleu5eldvv` |
 | `yubikey_49705840` | YubiKey (touch + PIN) | `age1yubikey1qtkf5924nev2a5vqncdurp729tq6xmdf27y6x95fv7kk5zje5vqr6umpnj8` |
@@ -30,13 +29,14 @@ crypto backend, and decryptable only by the recipients listed in `.sops.yaml`.
 | `huginn_ssh` | huginn's SSH host key, converted via `ssh-to-age` | `age1j0plfmmtayqhn4dcce0h7z4fapyra2t22wjwk2e3vz57njf34p7qryg2yg` |
 | `muninn_ssh` | muninn's SSH host key, converted via `ssh-to-age` | `age16vynhfk26c2z9tq6xh53skcwm4lqfwx5qr2cwjng3hlgj8hssp9qyncpnm` |
 
-Seven YubiKey identity stubs are stored in
-`age-yubikey-identity-{2ab5ff2f,49705840,7cb1cad0,b4d67c6f,be7a2b66,d43f4e92,0634d1c4}.txt`,
-one per physical key. Six require **touch + PIN once per session**; `yubikey_0634d1c4` is
+Six YubiKey identity stubs are stored in
+`age-yubikey-identity-{2ab5ff2f,49705840,7cb1cad0,b4d67c6f,be7a2b66,0634d1c4}.txt`,
+one per physical key. Five require **touch + PIN once per session**; `yubikey_0634d1c4` is
 provisioned with both policies set to Never, specifically so scripted/agent commands can decrypt
 without a human present — use it for non-interactive `sops`/`age` invocations, not as a
 substitute for a real YubiKey when a human is at the keyboard. `alberth`'s recovery key has no
-hardware component and is kept offline.
+hardware component and is kept offline. (A seventh identity, `yubikey_d43f4e92`, was retired and
+removed as a recipient from every secret via `sops updatekeys`; its stub file is gone too.)
 
 Each `*_ssh` recipient is derived from that host's real SSH host key
 (`ssh-to-age -i /etc/ssh/ssh_host_ed25519_key.pub`) — there is no separate host identity file or
@@ -190,7 +190,7 @@ sops --decrypt fleet-secrets.yaml
 or, to pin a specific identity rather than relying on `sops`'s default discovery:
 
 ```bash
-export SOPS_AGE_KEY_FILE=age-yubikey-identity-d43f4e92.txt
+export SOPS_AGE_KEY_FILE=age-yubikey-identity-2ab5ff2f.txt
 sops --decrypt fleet-secrets.yaml
 ```
 

@@ -53,12 +53,14 @@ Defined in `.sops.yaml`'s `keys:` list as YAML anchors, referenced from each rul
 `key_groups`:
 
 - `alberth` — an offline recovery key, no hardware.
-- Seven YubiKey identities (`yubikey_d43f4e92`, `yubikey_2ab5ff2f`, `yubikey_be7a2b66`,
-  `yubikey_49705840`, `yubikey_7cb1cad0`, `yubikey_b4d67c6f`, `yubikey_0634d1c4`). Six require a
-  touch + PIN each session; `yubikey_0634d1c4` is provisioned with PIN policy **Never** and touch
-  policy **Never** specifically so it can decrypt non-interactively (scripted/agent use) — treat
-  it as a safe default identity for command-line `sops`/`age` invocations that can't prompt for a
-  touch, but not as a substitute for the others when a human is actually present.
+- Six YubiKey identities (`yubikey_2ab5ff2f`, `yubikey_be7a2b66`, `yubikey_49705840`,
+  `yubikey_7cb1cad0`, `yubikey_b4d67c6f`, `yubikey_0634d1c4`). Five require a touch + PIN each
+  session; `yubikey_0634d1c4` is provisioned with PIN policy **Never** and touch policy
+  **Never** specifically so it can decrypt non-interactively (scripted/agent use) — treat it as
+  a safe default identity for command-line `sops`/`age` invocations that can't prompt for a
+  touch, but not as a substitute for the others when a human is actually present. (A seventh
+  identity, `yubikey_d43f4e92`, was retired and removed as a recipient from every secret via
+  `sops updatekeys` — its stub file is gone too.)
 - One `*<host>_ssh` anchor per nixie host that needs to decrypt at activation time (`codex_ssh`,
   `gammu_ssh`, `porkchop_ssh`, `huginn_ssh`, `muninn_ssh`, ...) — each is that host's real SSH
   host key (`/etc/ssh/ssh_host_ed25519_key.pub`) converted to age's X25519 form via `ssh-to-age`.
@@ -70,9 +72,9 @@ Defined in `.sops.yaml`'s `keys:` list as YAML anchors, referenced from each rul
   `sops.age.sshKeyPaths` (sops-nix's option for this) defaults to the host's SSH host key
   whenever `services.openssh.enable` is true, which every nixie host already sets.
 
-The seven YubiKey identity stubs are stored in
-`age-yubikey-identity-{2ab5ff2f,49705840,7cb1cad0,b4d67c6f,be7a2b66,d43f4e92,0634d1c4}.txt`, one
-per physical key (these are stub/pointer files for `age-plugin-yubikey`, not the private keys
+The six YubiKey identity stubs are stored in
+`age-yubikey-identity-{2ab5ff2f,49705840,7cb1cad0,b4d67c6f,be7a2b66,0634d1c4}.txt`, one per
+physical key (these are stub/pointer files for `age-plugin-yubikey`, not the private keys
 themselves). `alberth`'s recovery key has no hardware component and is kept offline.
 
 ---
@@ -190,7 +192,7 @@ Uses whichever age identity file(s) `sops` finds via `SOPS_AGE_KEY_FILE`/`age`'s
 discovery, or pass one explicitly:
 
 ```bash
-export SOPS_AGE_KEY_FILE=age-yubikey-identity-d43f4e92.txt
+export SOPS_AGE_KEY_FILE=age-yubikey-identity-2ab5ff2f.txt
 sops --decrypt fleet-secrets.yaml
 ```
 
