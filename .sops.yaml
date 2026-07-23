@@ -3,13 +3,11 @@
 # once Step 6 decided nix-secrets is the one surviving secrets repo — this is
 # where secrets actually get encrypted/edited going forward.
 #
-# Per-host keys below are still the legacy ragenix-derived host keys except
-# *codex_ssh, which is codex's real SSH host key converted to age's X25519
-# format (Step 8's decided identity source) — codex is the only host wired
-# up for the Step 9 PoC so far. The rest get switched over in Phase 3
-# batches; until then the fleet-wide catch-all rule still lists the old
-# *gammu/*porkchop/*huginn/*muninn ragenix keys unchanged, since real
-# migration for those hasn't happened yet.
+# Every per-host key below (*codex_ssh, *gammu_ssh, *porkchop_ssh,
+# *huginn_ssh, *muninn_ssh) is each host's real SSH host key converted to
+# age's X25519 format (Step 8's decided identity source). The old
+# ragenix-derived per-host keys these replaced are gone as of Step 27 —
+# ragenix itself was fully retired from nixie in Phase 6.
 #
 # IMPORTANT — this must be the *converted* age1... form (matching what
 # `ssh-to-age -i <host>.pub` computes), NOT the raw `ssh-ed25519 AAAA...`
@@ -34,15 +32,10 @@ keys:
   - &yubikey_7cb1cad0 age1yubikey1q0pmgm34s0ckw8jj9auzlvm5mc6mpxxgc5syu0aw55cqu2hnm7krqrnq60a
   - &yubikey_b4d67c6f age1yubikey1qt9a6xc0nzpe484kzeuw55hsm4shu3ug9j6m4ngtsexqrgptd6zfx596dqn
   - &yubikey_0634d1c4 age1yubikey1qv0utu8hcayj3xeppwjuckzmrgd0ltjuq59ffmwd6t9f2m7depa2sl0ne87
-  - &codex age1yl42nc3qmtper3vt7am3f2u6f2afp7scu2nqxfqjlw4qn64qeaqq20xkcc
   - &codex_ssh age1dq4gttszvhkf5j6kcvquggnc7a4vxrwgyk6k4ldxmmpekc7pzupqegqrdm
-  - &gammu age12vhj5z6zepnz7uyzks23p6rgwa7rudja7ectsrl89zf96nnmfcnq264972
   - &gammu_ssh age1c2cmluquave5rmzequv7tea7c8zvt37yuml57vcd9qvvlla98qvsww99w0
-  - &porkchop age1yegmaunkewrxj3v6lt86nalta0xq5gq7dpcxrggqp8p7nlzdde4qsnq5jz
   - &porkchop_ssh age1qytulrl6hskztw95hzcjlwgyswzua9v38xrdl56phhctkudc2pxqlekktk
-  - &huginn age1je5xg9s90g8l0307xpphclxj3fugvkl59ne9yna46lne9fw0wfpq59lzux
   - &huginn_ssh age1j0plfmmtayqhn4dcce0h7z4fapyra2t22wjwk2e3vz57njf34p7qryg2yg
-  - &muninn age1hryy6kdlt3ufej07r9rp2g8x8pm0e6ndgdyke6jdq95uchnjdghqprayh9
   - &muninn_ssh age16vynhfk26c2z9tq6xh53skcwm4lqfwx5qr2cwjng3hlgj8hssp9qyncpnm
 
 creation_rules:
@@ -84,15 +77,14 @@ creation_rules:
           - *porkchop_ssh
           - *huginn_ssh
           - *muninn_ssh
-  # ldapHosts (Step 13) — muninn's KDC/LDAP boot-time secrets
-  # (highest-consequence group). Consolidated into a single ldap.yaml per
-  # Step 7's decision (admin-password, kdc-password, krb5-master-key are all
-  # plain text and share this exact recipient set — confirmed by decrypting
-  # and checking for non-printable bytes before assuming otherwise).
-  # PoC-only for now (Step 13 deferred full cutover to Phase 5, since the
-  # actual consuming code lives in the external nix-kerberos-ldap repo, not
-  # here) — *muninn_ssh is deployed alongside, not replacing, the legacy
-  # *muninn ragenix anchor still used by the old ^ldap/.*$ per-file secrets.
+  # ldapHosts (Step 13, cut over for real in Step 22/23) — muninn's KDC/LDAP
+  # boot-time secrets (highest-consequence group). Consolidated into a single
+  # ldap.yaml per Step 7's decision (admin-password, kdc-password,
+  # krb5-master-key are all plain text and share this exact recipient set —
+  # confirmed by decrypting and checking for non-printable bytes before
+  # assuming otherwise). The old per-file ^ldap/.*$ secrets this replaced
+  # were deleted in Step 27 once Phase 5 validated the cutover live on
+  # muninn.
   - path_regex: ^ldap\.yaml$
     key_groups:
       - age:
@@ -105,19 +97,6 @@ creation_rules:
           - *yubikey_b4d67c6f
           - *yubikey_0634d1c4
           - *muninn_ssh
-  # ldapHosts (legacy, per-file .age) — still in use until Phase 5 completes
-  - path_regex: ^ldap/.*$
-    key_groups:
-      - age:
-          - *alberth
-          - *yubikey_d43f4e92
-          - *yubikey_2ab5ff2f
-          - *yubikey_be7a2b66
-          - *yubikey_49705840
-          - *yubikey_7cb1cad0
-          - *yubikey_b4d67c6f
-          - *muninn
-
   # unifiBackupHosts (Step 14) — unifi-backup runs on porkchop, using its
   # real ssh-to-age-derived key, not the legacy *porkchop anchor.
   - path_regex: ^unifi-backup-ssh-key\.yaml$
@@ -247,9 +226,9 @@ creation_rules:
           - *yubikey_0634d1c4
           - *muninn_ssh
 
-  # LDAP SASL keytab (Phase 4, Step 21) — binary, PoC-only like Step 13's
-  # ldap.yaml: the real consuming code (age.secrets.ldapSaslKeytab) lives in
-  # the external nix-kerberos-ldap repo, deferred to Phase 5.
+  # LDAP SASL keytab (Phase 4, Step 21; cut over for real in Step 22/23) —
+  # binary. The consuming code (sops.secrets.ldapSaslKeytab) lives in the
+  # external nix-kerberos-ldap repo.
   - path_regex: ^keytab-ldap-muninn\.age$
     key_groups:
       - age:
@@ -263,12 +242,11 @@ creation_rules:
           - *yubikey_0634d1c4
           - *muninn_ssh
 
-  # Fleet-wide catch-all — users ++ systems (also covers syncthingHosts,
-  # which is currently identical to systems). Must stay last: sops uses
-  # first-matching-rule-wins, so this is the fallback for every path not
-  # matched above (github/*, luadns.ini, tailscale-authkey, cachix-authtoken,
-  # default-nixos-user-password, unifi/api-key, users/*, ghostty-themes/*,
-  # syncthing-gui-password).
+  # Fleet-wide catch-all — users ++ every host's real ssh-to-age key. Must
+  # stay last: sops uses first-matching-rule-wins, so this is the fallback
+  # for any path not matched above. No live file currently falls through to
+  # it (every real secret has its own scoped rule above), but it's kept as a
+  # safety net for a new file added without its own rule.
   - path_regex: .*
     key_groups:
       - age:
@@ -279,8 +257,9 @@ creation_rules:
           - *yubikey_49705840
           - *yubikey_7cb1cad0
           - *yubikey_b4d67c6f
-          - *codex
-          - *gammu
-          - *porkchop
-          - *huginn
-          - *muninn
+          - *yubikey_0634d1c4
+          - *codex_ssh
+          - *gammu_ssh
+          - *porkchop_ssh
+          - *huginn_ssh
+          - *muninn_ssh
