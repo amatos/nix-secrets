@@ -10,17 +10,19 @@ of the phrasing reads.
 
 ## What this is
 
-nix-secrets holds age-encrypted **text** secrets (SSH keys, tokens, passwords, `.ini`
+nix-secrets holds sops-encrypted **text** secrets (SSH keys, tokens, passwords, `.ini`
 credentials) for the [nixie](https://github.com/amatos/nixie) NixOS + nix-darwin
 configuration. It is a plain git repo, not a flake (`flake = false` in nixie's
 `flake.nix`), referenced there as the `nix-secrets` input.
 
-All files are encrypted with [ragenix](https://github.com/yaxitech/ragenix) and
-decryptable by the recipients declared in `secrets.nix`.
+All files are encrypted with [sops](https://github.com/getsops/sops) (via
+[sops-nix](https://github.com/Mic92/sops-nix) on the consuming/nixie side), using
+[age](https://github.com/FiloSottile/age) as the underlying crypto backend, and
+decryptable only by the recipients declared in `.sops.yaml`.
 
 **Binary secrets do not belong here.** Git diffs binary files poorly and they don't
 share this repo's plaintext-editing workflow. Kerberos keytabs live in the dedicated
-[`keytabs-matos-cc`](https://github.com/amatos/keytabs-matos-cc) repo instead. If a new
+[`nix-keytabs-matos-cc`](https://github.com/amatos/nix-keytabs-matos-cc) repo instead. If a new
 binary secret type is needed, create another dedicated repo following that pattern —
 don't add it here.
 
@@ -29,73 +31,97 @@ don't add it here.
 ## Layout
 
 ```text
-secrets.nix                          # ragenix recipients (who can decrypt what)
-age-yubikey-identity-*.txt           # YubiKey identity stubs, not the keys
-*.age                                # age-encrypted secrets; grouped into a
-                                      # subdir once a subsystem has 2+ files
-                                      # (github/, ldap/, unifi/, ghostty-themes,
-                                      # users/) — true one-offs stay flat at
-                                      # the root
+.sops.yaml                # recipients (who can decrypt what) — path_regex rules
+age-yubikey-identity-*.txt # YubiKey identity stubs, not the keys
+*.yaml                     # sops-encrypted multi-key text secrets, one file
+                            # per subsystem/group (fleet-secrets.yaml,
+                            # ldap.yaml, ghostty-themes.yaml, ...)
+keytab-*.age                # sops-encrypted binary Kerberos keytabs (still
+                             # named .age by convention — see
+                             # nix-keytabs-matos-cc for the rest of this type)
 ```
+
+Unlike the old per-file-per-secret layout, sops's native multi-key YAML documents mean related
+secrets that share a recipient set live together in one file (e.g. `fleet-secrets.yaml` holds
+`github-ratelimit`, `tailscale-authkey`, `cachix-authtoken`, ... as top-level keys) rather than
+one `.age` file per secret. Check whether an existing file already covers the right recipient
+scope before creating a new one.
 
 ## Recipients
 
-Defined in `secrets.nix`: `alberth` (an offline recovery key, no hardware),
-five backup YubiKey identities (`yubikeyd43f4e92`, `yubikey2ab5ff2f`,
-`yubikeybe7a2b66`, `yubikey49705840`, `yubikey7cb1cad0`), plus a host age key
-per nixie host that needs to decrypt at activation time (`codex`, `gammu`,
-`porkchop`, ...). Host keys live at `/etc/age/host-key` on each host,
-generated on first activation by nixie's `modules/common/age-host-key.nix`.
+Defined in `.sops.yaml`'s `keys:` list as YAML anchors, referenced from each rule's
+`key_groups`:
 
-The YubiKeys' touch policy is **cached** (one touch valid for 15 seconds);
-a PIN is required once per session for each YubiKey.
+- `alberth` — an offline recovery key, no hardware.
+- Seven YubiKey identities (`yubikey_d43f4e92`, `yubikey_2ab5ff2f`, `yubikey_be7a2b66`,
+  `yubikey_49705840`, `yubikey_7cb1cad0`, `yubikey_b4d67c6f`, `yubikey_0634d1c4`). Six require a
+  touch + PIN each session; `yubikey_0634d1c4` is provisioned with PIN policy **Never** and touch
+  policy **Never** specifically so it can decrypt non-interactively (scripted/agent use) — treat
+  it as a safe default identity for command-line `sops`/`age` invocations that can't prompt for a
+  touch, but not as a substitute for the others when a human is actually present.
+- One `*<host>_ssh` anchor per nixie host that needs to decrypt at activation time (`codex_ssh`,
+  `gammu_ssh`, `porkchop_ssh`, `huginn_ssh`, `muninn_ssh`, ...) — each is that host's real SSH
+  host key (`/etc/ssh/ssh_host_ed25519_key.pub`) converted to age's X25519 form via `ssh-to-age`.
+  This **must** be the converted `age1...` string, not the raw `ssh-ed25519 AAAA...` public key —
+  sops-nix's `sops-install-secrets` converts the SSH private key internally and matches against
+  the converted form; a raw SSH key string only works with unrelated `age -R`/`-i sshkey` CLI
+  paths, not the real nixie deploy path. There is no separate host identity file or generation
+  step anymore — the SSH host key doubles as the decryption identity directly, since
+  `sops.age.sshKeyPaths` (sops-nix's option for this) defaults to the host's SSH host key
+  whenever `services.openssh.enable` is true, which every nixie host already sets.
+
+The seven YubiKey identity stubs are stored in
+`age-yubikey-identity-{2ab5ff2f,49705840,7cb1cad0,b4d67c6f,be7a2b66,d43f4e92,0634d1c4}.txt`, one
+per physical key (these are stub/pointer files for `age-plugin-yubikey`, not the private keys
+themselves). `alberth`'s recovery key has no hardware component and is kept offline.
 
 ---
 
 ## Creating a new secret
 
-**Prerequisites:** YubiKey inserted; `ragenix` available (it's in the nixie devShell:
+**Prerequisites:** YubiKey inserted (unless using the non-interactive `yubikey_0634d1c4`
+identity); `sops`/`age`/`ssh-to-age` available (they're in nixie's devShell:
 `nix develop /path/to/nixie`).
 
-1. **Declare it in `secrets.nix`** — map the new filename to the recipient keys that
-   should decrypt it:
-
-   ```nix
-   "my-new-secret.age".publicKeys = allKeys;  # or users / systems / a subset
-   ```
+1. **Confirm (or add) a `.sops.yaml` rule** covering the target filename — check for an existing
+   `path_regex` rule with the right recipient scope before inventing a new one. If this secret
+   needs its own narrower recipient set, add a new rule (keep the fleet-wide catch-all `.*` rule
+   last — sops uses first-matching-rule-wins).
 
 2. **Create (or edit) the encrypted file:**
 
    ```bash
    cd /path/to/nix-secrets
-   ragenix -e my-new-secret.age
+   sops my-new-secrets.yaml
    ```
 
-   This opens `$EDITOR`. Paste or type the secret, save, close. ragenix encrypts to
-   every recipient listed in `secrets.nix` and writes `my-new-secret.age`. Touch the
-   YubiKey when prompted (LED blinks).
+   This opens `$EDITOR` on the decrypted plaintext (or a blank document for a new file). Edit as
+   plain YAML (one top-level key per secret if grouping several together), save, close. `sops`
+   re-encrypts to every recipient in the matching `.sops.yaml` rule. Touch the YubiKey when
+   prompted (LED blinks), unless using the non-interactive identity.
 
-3. **Wire it into nixie** — in the appropriate nixie module (usually `modules/common/`
-   for cross-platform secrets), add an `age.secrets` entry:
+3. **Wire it into nixie** — in the appropriate nixie module (usually `modules/common/` for
+   cross-platform secrets), add a `sops.secrets` entry:
 
    ```nix
-   age.secrets.my-new-secret = {
-     file = "${nix-secrets}/my-new-secret.age";
-     owner = "alberth";   # optional; defaults to root
-     mode = "0400";       # optional
+   sops.secrets.my-new-secret = {
+     sopsFile = "${nix-secrets}/my-new-secrets.yaml";
+     key = "my-new-secret";  # the YAML key inside the file
+     owner = "alberth";      # optional; defaults to root
+     mode = "0400";          # optional
    };
    ```
 
-   Reference the decrypted path elsewhere as `config.age.secrets.my-new-secret.path`.
-   See nixie's `CLAUDE.md` ("Wiring an external secrets repo into nixie") for the full
-   pattern, including adding the input/specialArgs if this is the first secret nixie
-   consumes from this repo.
+   Reference the decrypted path elsewhere as `config.sops.secrets.my-new-secret.path`
+   (`/run/secrets/my-new-secret` by default). See nixie's `CLAUDE.md` ("Wiring an external
+   secrets repo into nixie") for the full pattern, including adding the input/specialArgs if this
+   is the first secret nixie consumes from this repo.
 
 4. **Commit both repos:**
 
    ```bash
    # nix-secrets
-   git add my-new-secret.age secrets.nix
+   git add my-new-secrets.yaml .sops.yaml
    git commit -S -m "feat: add my-new-secret"
    git push
 
@@ -104,51 +130,73 @@ a PIN is required once per session for each YubiKey.
 
 ---
 
-## Rekeying secrets (after adding a new host)
+## Updating an existing secret's content
 
-1. On the new host, after first activation, get its public key:
+No recipient change needed — just re-open and re-encrypt in place:
+
+```bash
+cd /path/to/nix-secrets
+sops fleet-secrets.yaml
+```
+
+Edit the value(s), save, close. `sops` re-encrypts to the same recipients already in
+`.sops.yaml`. Commit as usual.
+
+For a scripted/non-interactive update (e.g. rotating a token programmatically), decrypt to a
+temp file, edit the specific key, then encrypt back in place — `sops -e -i <file>` after
+overwriting the plaintext, **not** a shell redirect (`sops -e <file> > <file>`), since `sops`
+matches `.sops.yaml`'s `path_regex` against the *input* path — a redirect target isn't seen by
+the matcher and can silently pick the wrong (usually the fleet-wide catch-all) recipient rule.
+
+---
+
+## Adding a recipient to an existing secret
+
+1. Add the new key to `.sops.yaml`'s `keys:` list (a new `&<host>_ssh` anchor for a new host, per
+   "Recipients" above), then reference that anchor from the relevant rule's `key_groups`.
+2. Re-encrypt the affected file's data key for the new recipient set — this does **not** require
+   decrypting/re-encrypting the actual secret content:
 
    ```bash
-   age-keygen -y /etc/age/host-key
+   sops updatekeys my-new-secrets.yaml
    ```
 
-2. Add it to `secrets.nix`:
+   Touch the YubiKey when prompted (once per file). Repeat for every file the new recipient needs.
+3. Commit and push.
 
-   ```nix
-   let
-     newhostname = "age1...";   # paste public key here
-     systems = [ codex gammu newhostname ];
-   in ...
-   ```
+## Removing a recipient
 
-3. Rekey all secrets:
+Same mechanism, reversed:
 
-   ```bash
-   cd /path/to/nix-secrets
-   ragenix --rekey
-   ```
+1. Delete the key from `.sops.yaml`'s `key_groups` (and the `keys:` anchor, if nothing else
+   references it).
+2. `sops updatekeys <file>` for each affected file.
+3. Commit and push.
 
-   Touch the YubiKey when prompted (once per secret file).
-
-4. Commit:
-
-   ```bash
-   git add -A
-   git commit -S -m "chore: rekey secrets for newhostname"
-   git push
-   ```
+**This does not rotate the secret's value.** A removed recipient who already decrypted the file
+could have retained a plaintext copy — `sops updatekeys` only changes who can decrypt *future*
+copies of the file. If the removal is security-motivated (e.g. offboarding, key compromise),
+rotate the underlying secret value separately.
 
 ---
 
 ## Decrypting a secret manually
 
 ```bash
-age --decrypt \
-  -i age-yubikey-identity-d43f4e92.txt \
-  github/ssh-key.age
+sops --decrypt fleet-secrets.yaml
 ```
 
-Touch the YubiKey when prompted.
+Uses whichever age identity file(s) `sops` finds via `SOPS_AGE_KEY_FILE`/`age`'s default identity
+discovery, or pass one explicitly:
+
+```bash
+export SOPS_AGE_KEY_FILE=age-yubikey-identity-d43f4e92.txt
+sops --decrypt fleet-secrets.yaml
+```
+
+Touch the YubiKey when prompted (skip for `age-yubikey-identity-0634d1c4.txt`, the
+non-interactive safe identity — see "Recipients" above). For a binary secret (a keytab), add
+`--input-type binary --output-type binary`.
 
 ---
 
@@ -162,7 +210,7 @@ Touch the YubiKey when prompted.
   Enforced in CI by the `verify-signed-commits` job in `.github/workflows/ci.yml`.
 - Never commit decrypted plaintext (`.gitignore` excludes `*.dec`) — double-check before
   `git add -A` after manual decryption for debugging.
-- Keep `README.md`'s Recipients and Secrets tables in sync with `secrets.nix` and the
+- Keep `README.md`'s Recipients and Secrets tables in sync with `.sops.yaml` and the
   files actually present whenever either changes.
 
 ## Releases
@@ -178,9 +226,10 @@ Releases use CalVer, matching nixie: `yy.mm.release` (e.g. `26.07.01`).
 
 ## Before making changes
 
-1. Check whether the secret is binary — if so it belongs in `keytabs-matos-cc`
+1. Check whether the secret is binary — if so it belongs in `nix-keytabs-matos-cc`
    (or another dedicated repo), not here.
-2. Check `secrets.nix` before adding a new recipient group — the subset you need
-   (`users`, `systems`, `ldapHosts`, `syncthingHosts`, ...) may already exist.
-3. After adding or rekeying a secret, update the corresponding nixie module in the
+2. Check `.sops.yaml` before adding a new rule/anchor — the recipient scope you need
+   (the YubiKey identities, a specific host's `*_ssh` anchor, the fleet-wide catch-all, ...) may
+   already exist.
+3. After adding, updating, or re-keying a secret, update the corresponding nixie module in the
    same change set so the two repos don't drift.
