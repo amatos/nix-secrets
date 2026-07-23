@@ -1,0 +1,265 @@
+# sops-nix migration experiment (SOPS_MIGRATION.md) — age recipients
+# transcribed from nix-secrets/secrets.nix. Moved here from nixie's repo root
+# once Step 6 decided nix-secrets is the one surviving secrets repo — this is
+# where secrets actually get encrypted/edited going forward.
+#
+# Every per-host key below (*codex_ssh, *gammu_ssh, *porkchop_ssh,
+# *huginn_ssh, *muninn_ssh) is each host's real SSH host key converted to
+# age's X25519 format (Step 8's decided identity source). The old
+# ragenix-derived per-host keys these replaced are gone as of Step 27 —
+# ragenix itself was fully retired from nixie in Phase 6.
+#
+# IMPORTANT — this must be the *converted* age1... form (matching what
+# `ssh-to-age -i <host>.pub` computes), NOT the raw `ssh-ed25519 AAAA...`
+# public key string. sops-nix's actual deploy-time tool
+# (sops-install-secrets, driven by `sops.age.sshKeyPaths`) converts the SSH
+# private key into a plain X25519 age identity internally and matches it
+# against a plain age1... recipient — confirmed directly from its own log
+# output ("Imported ... as age key with fingerprint age1dq4gttsz...",
+# exactly matching ssh-to-age's output). A raw ssh-ed25519 recipient string
+# *does* work with plain `sops`/`age` CLI (`age -R`/`-i sshkey`), but that's
+# a red herring: `age -R` produces an SSH-specific ciphertext stanza that
+# only `-i sshkey`-style identity loading unwraps, which is a different
+# (and, for our purposes, irrelevant) code path from what sops-install-
+# secrets actually does. See SOPS_MIGRATION.md's Step 9 notes for the full,
+# corrected diagnosis (an earlier version of this file/notes had it backwards).
+keys:
+  - &alberth age1gp5d3tzdpufcrk7f6dkr92xtx2p847k79kxxdp9nn0yjk2qvw34sws84m7
+  - &yubikey_d43f4e92 age1yubikey1qdxkz5rs00du7y4284ehlkktq0h93wsqszwegjrx97scqs8ptq3f6kws7sq
+  - &yubikey_2ab5ff2f age1yubikey1qtn8y2ad0vr9ddazfsxy4fmlt64kknhjsll2xvfgekck3n0dc0xjvf5rah6
+  - &yubikey_be7a2b66 age1yubikey1qgmkn4s840hwg4kfazjn6u4r2nq9utl60chscraq4sqg9jsf0wleu5eldvv
+  - &yubikey_49705840 age1yubikey1qtkf5924nev2a5vqncdurp729tq6xmdf27y6x95fv7kk5zje5vqr6umpnj8
+  - &yubikey_7cb1cad0 age1yubikey1q0pmgm34s0ckw8jj9auzlvm5mc6mpxxgc5syu0aw55cqu2hnm7krqrnq60a
+  - &yubikey_b4d67c6f age1yubikey1qt9a6xc0nzpe484kzeuw55hsm4shu3ug9j6m4ngtsexqrgptd6zfx596dqn
+  - &yubikey_0634d1c4 age1yubikey1qv0utu8hcayj3xeppwjuckzmrgd0ltjuq59ffmwd6t9f2m7depa2sl0ne87
+  - &codex_ssh age1dq4gttszvhkf5j6kcvquggnc7a4vxrwgyk6k4ldxmmpekc7pzupqegqrdm
+  - &gammu_ssh age1c2cmluquave5rmzequv7tea7c8zvt37yuml57vcd9qvvlla98qvsww99w0
+  - &porkchop_ssh age1qytulrl6hskztw95hzcjlwgyswzua9v38xrdl56phhctkudc2pxqlekktk
+  - &huginn_ssh age1j0plfmmtayqhn4dcce0h7z4fapyra2t22wjwk2e3vz57njf34p7qryg2yg
+  - &muninn_ssh age16vynhfk26c2z9tq6xh53skcwm4lqfwx5qr2cwjng3hlgj8hssp9qyncpnm
+
+creation_rules:
+  # ghostty-themes.yaml (Step 17) — widened from Step 9's codex-only PoC
+  # scope to the full fleet, using each host's real ssh-to-age key.
+  - path_regex: ^ghostty-themes\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *codex_ssh
+          - *gammu_ssh
+          - *porkchop_ssh
+          - *huginn_ssh
+          - *muninn_ssh
+  # fleet-secrets.yaml (Step 17) — remaining users++systems-scoped secrets
+  # (github-ratelimit, github-ssh-key, unifi-api-key, tailscale-authkey,
+  # cachix-authtoken, luadns-ini, user-password-alberth, user-password-nixos,
+  # syncthing-gui-password), using each host's real ssh-to-age key.
+  - path_regex: ^fleet-secrets\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *codex_ssh
+          - *gammu_ssh
+          - *porkchop_ssh
+          - *huginn_ssh
+          - *muninn_ssh
+  # ldapHosts (Step 13, cut over for real in Step 22/23) — muninn's KDC/LDAP
+  # boot-time secrets (highest-consequence group). Consolidated into a single
+  # ldap.yaml per Step 7's decision (admin-password, kdc-password,
+  # krb5-master-key are all plain text and share this exact recipient set —
+  # confirmed by decrypting and checking for non-printable bytes before
+  # assuming otherwise). The old per-file ^ldap/.*$ secrets this replaced
+  # were deleted in Step 27 once Phase 5 validated the cutover live on
+  # muninn.
+  - path_regex: ^ldap\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *muninn_ssh
+  # unifiBackupHosts (Step 14) — unifi-backup runs on porkchop, using its
+  # real ssh-to-age-derived key, not the legacy *porkchop anchor.
+  - path_regex: ^unifi-backup-ssh-key\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *porkchop_ssh
+
+  # smtpSmartRelays (Step 12) — huginn (primary) + porkchop (backup), using
+  # their real ssh-to-age-derived keys, not the legacy ragenix *porkchop/
+  # *huginn anchors (those stay in the fleet-wide catch-all below for
+  # not-yet-migrated secrets).
+  - path_regex: ^smtp-relay-sasl\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *porkchop_ssh
+          - *huginn_ssh
+
+  # remoteBuildHosts (Step 15) — codex is the remote-build client, using its
+  # real ssh-to-age-derived key (*codex_ssh, already derived in Step 9/10),
+  # not the legacy *codex anchor.
+  - path_regex: ^builder-codex-ssh-key\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *codex_ssh
+
+  # grafanaHosts (Step 16) — Grafana runs on porkchop, using its real
+  # ssh-to-age-derived key, not the legacy *porkchop anchor.
+  - path_regex: ^grafana-secret-key\.yaml$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *porkchop_ssh
+
+  # Host keytabs (Phase 4, Step 19/20) — binary Kerberos keytabs, one file
+  # per host (Step 7's carve-out: binary content doesn't consolidate the
+  # way text secrets do). Each scoped to users + that host's real
+  # ssh-to-age key only, not the shared fleet-wide group below.
+  - path_regex: ^keytab-codex\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *codex_ssh
+  - path_regex: ^keytab-gammu\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *gammu_ssh
+  - path_regex: ^keytab-porkchop\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *porkchop_ssh
+  - path_regex: ^keytab-huginn\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *huginn_ssh
+  - path_regex: ^keytab-muninn\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *muninn_ssh
+
+  # LDAP SASL keytab (Phase 4, Step 21; cut over for real in Step 22/23) —
+  # binary. The consuming code (sops.secrets.ldapSaslKeytab) lives in the
+  # external nix-kerberos-ldap repo.
+  - path_regex: ^keytab-ldap-muninn\.age$
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *muninn_ssh
+
+  # Fleet-wide catch-all — users ++ every host's real ssh-to-age key. Must
+  # stay last: sops uses first-matching-rule-wins, so this is the fallback
+  # for any path not matched above. No live file currently falls through to
+  # it (every real secret has its own scoped rule above), but it's kept as a
+  # safety net for a new file added without its own rule.
+  - path_regex: .*
+    key_groups:
+      - age:
+          - *alberth
+          - *yubikey_d43f4e92
+          - *yubikey_2ab5ff2f
+          - *yubikey_be7a2b66
+          - *yubikey_49705840
+          - *yubikey_7cb1cad0
+          - *yubikey_b4d67c6f
+          - *yubikey_0634d1c4
+          - *codex_ssh
+          - *gammu_ssh
+          - *porkchop_ssh
+          - *huginn_ssh
+          - *muninn_ssh
