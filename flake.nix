@@ -82,14 +82,17 @@
         {
           default = pkgs.mkShell {
             name = "nix-secrets";
-            packages = [ pkgs.nixfmt
-              pkgs.sops
+            packages = [
+              pkgs.nixfmt
               pkgs.rage
-              pkgs.age
+              pkgs.ragenix
               pkgs.age-plugin-yubikey
+              pkgs.age-plugin-1p
               pkgs.ssh-to-age
               pkgs.git
-              pkgs.gnupg ];
+              pkgs.gnupg
+              pkgs.mkpasswd
+            ];
             # Installs git hooks into .git/hooks when entering the devShell
             inherit (preCommitCheck.${system}) shellHook;
           };

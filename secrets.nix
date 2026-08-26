@@ -27,11 +27,10 @@ let
 
   # ── host SSH keys (age can use ed25519 SSH keys directly) ─────────────────
   # Retrieve with: ssh-keyscan <host> | ssh-to-age
-  exampleHost = "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-  exampleMac  = "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-  codex       = "age1v05tukn3rdpxtuk294snau4tt9jqns2qylgfe7xr7x7ddavdny2sw80hkv";
+  # exampleHost = "age1nixosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  codex = "age1v05tukn3rdpxtuk294snau4tt9jqns2qylgfe7xr7x7ddavdny2sw80hkv";
 
-  allHosts = [ exampleHost exampleMac codex ];
+  allHosts = [ codex ];
 
   allYubikeys = [
     yubikey2ab5ff2f
@@ -48,4 +47,6 @@ in
 {
   # ── secrets ───────────────────────────────────────────────────────────────
   # "example-password.age".publicKeys = [ alberth ] ++ allHosts;
+  "users/alberth-password.age".publicKeys = allKeys;
+  "users/nixos-password.age".publicKeys = allKeys;
 }
