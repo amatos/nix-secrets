@@ -47,6 +47,12 @@ in
 {
   # ── secrets ───────────────────────────────────────────────────────────────
   # "example-password.age".publicKeys = [ alberth ] ++ allHosts;
+  "services/certbot-luadns.age".publicKeys = allKeys;
+  "services/github-ratelimit.age".publicKeys = allKeys;
+  "services/syncthing-gui.age".publicKeys = allKeys;
+  "services/tailscale-authkey.age".publicKeys = allKeys;
+  "services/unifi-api.age".publicKeys = allKeys;
+  "ssh/github-ssh-key.age".publicKeys = allKeys;
   "users/alberth-password.age".publicKeys = allKeys;
   "users/nixos-password.age".publicKeys = allKeys;
 }
