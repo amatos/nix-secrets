@@ -26,9 +26,14 @@ let
   yubikeyb4d67c6f = "age1yubikey1qt9a6xc0nzpe484kzeuw55hsm4shu3ug9j6m4ngtsexqrgptd6zfx596dqn";
 
   # ── host SSH keys (age can use ed25519 SSH keys directly) ─────────────────
-  # Retrieve with: ssh-keyscan <host> | ssh-to-age
-  # exampleHost = "age1nixosxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-  codex = "age1v05tukn3rdpxtuk294snau4tt9jqns2qylgfe7xr7x7ddavdny2sw80hkv";
+  # Use the raw "ssh-ed25519 AAAA..." public key text (e.g. from
+  # /etc/ssh/ssh_host_ed25519_key.pub), NOT an ssh-to-age-converted bech32
+  # string: `age -i <sshkey>` only matches the ssh-ed25519-typed stanza that
+  # results from encrypting to the raw key text. Encrypting to the converted
+  # bech32 form produces a generic X25519 stanza that age's SSH identity
+  # matching never recognizes, so it silently fails to decrypt at runtime.
+  # exampleHost = "ssh-ed25519 AAAAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  codex = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIII/ZypHOYRSYn7VyKOqg14V/cclBs9PrApCTT9x4ygr";
 
   allHosts = [ codex ];
 
