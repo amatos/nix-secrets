@@ -11,8 +11,12 @@ decrypted at activation time on the target host.
   recipients it's encrypted to.
 - `age-yubikey-identity-*.txt` — YubiKey age identities. Each corresponds to a
   physical YubiKey; used to decrypt when editing a secret.
-- `users/*.age` — per-user secrets (e.g. login password hashes), consumed by
+- `users/<name>-password.age` — per-user login password hashes, consumed by
   `hosts/nixos-common` in `nix-dendrites`.
+- `users/<name>.nix` — non-secret per-user identity data (full name, email,
+  GitHub id, GPG signing key), shared between `nix-dendrites` and `nix-home`
+  so it isn't duplicated in each repo. Not age-encrypted since none of it is
+  actually sensitive.
 - Other secrets live at the repo root (or a topic subdirectory), referenced by
   path from `secrets.nix` and from the consuming host/module config.
 
