@@ -34,8 +34,14 @@ let
   # matching never recognizes, so it silently fails to decrypt at runtime.
   # exampleHost = "ssh-ed25519 AAAAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
   codex = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIII/ZypHOYRSYn7VyKOqg14V/cclBs9PrApCTT9x4ygr";
+  muninn = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnw8CzTXukohE1iQu3LBAJlpAxJWGCLfOpRcWWK8Frg";
+  huginn = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP2lcyzbIlMHZ0cbz6VP6IDoHduNCG2RAB+1grAcmS51";
 
-  allHosts = [ codex ];
+  allHosts = [
+    codex
+    muninn
+    huginn
+  ];
 
   allYubikeys = [
     yubikey2ab5ff2f
